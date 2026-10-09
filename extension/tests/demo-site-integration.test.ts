@@ -92,8 +92,8 @@ describe('Demo Site & ACCESSOS Semantic Extractor Integration Suite', () => {
     expect(representation.buttons.length).toBeGreaterThanOrEqual(6);
 
     const buttonTexts = representation.buttons.map((b) => b.text);
-    expect(buttonTexts.some((t) => t.includes('Load Example Data'))).toBe(true);
-    expect(buttonTexts.some((t) => t.includes('Reset Form'))).toBe(true);
+    expect(buttonTexts.some((t) => t.includes('Import DigiLocker Data') || t.includes('Load Example Data'))).toBe(true);
+    expect(buttonTexts.some((t) => t.includes('Clear Form') || t.includes('Reset Form'))).toBe(true);
     expect(buttonTexts.some((t) => t.includes('Submit Application'))).toBe(true);
     expect(buttonTexts.some((t) => t.includes('Save Draft'))).toBe(true);
   });

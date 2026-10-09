@@ -180,7 +180,7 @@ describe('Demo Site Functional & Usability Test Suite', () => {
     expect(display?.classList.contains('selected')).toBe(true);
   });
 
-  it('11. Load Example Data populates all 8 sections with fictional candidate data', () => {
+  it('11. Import DigiLocker Data populates all 8 sections with verified candidate data', () => {
     const btnLoad = document.getElementById('btn-load-demo') as HTMLElement;
     btnLoad?.click();
 
@@ -197,10 +197,10 @@ describe('Demo Site Functional & Usability Test Suite', () => {
     expect(declCheck.checked).toBe(true);
 
     const alertBox = document.getElementById('form-alert-box');
-    expect(alertBox?.textContent).toContain('Example fictional candidate profile loaded');
+    expect(alertBox?.textContent).toContain('Verified applicant profile imported');
   });
 
-  it('12. Successful submission produces confirmation card with reference SCH-DEMO-2026-001', () => {
+  it('12. Successful submission produces confirmation card with reference SCH-2026-884920', () => {
     // 1. Populate demo data
     const btnLoad = document.getElementById('btn-load-demo') as HTMLElement;
     btnLoad?.click();
@@ -216,7 +216,7 @@ describe('Demo Site Functional & Usability Test Suite', () => {
 
     expect(formEl?.style.display).toBe('none');
     expect(confirmCard?.style.display).toBe('block');
-    expect(refBadge?.textContent).toBe('SCH-DEMO-2026-001');
+    expect(refBadge?.textContent).toBe('SCH-2026-884920');
     expect(candidateName?.textContent).toBe('Aarav Sharma');
   });
 

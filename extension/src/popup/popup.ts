@@ -804,7 +804,7 @@ export class PopupController {
 
       this.setState('IDLE');
       if (this.statusMessage) {
-        this.statusMessage.textContent = 'Demo state reset to clean baseline.';
+        this.statusMessage.textContent = 'Session reset to clean baseline.';
         this.statusMessage.classList.remove('hidden');
       }
 
