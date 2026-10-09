@@ -1,0 +1,14 @@
+STATE BANK OF INDIA - PUNE MAIN BRANCH
+SAVINGS BANK ACCOUNT PASSBOOK STATEMENT
+------------------------------------------------------------
+Account Holder: Aarav Sharma
+Account Number: 123456789012
+Customer ID (CIF): 89012345678
+Branch IFSC Code: SBIN0001234
+Branch Code: 01234 (Pune Main)
+MICR Code: 411002001
+Account Type: Resident Savings Bank Account
+Account Status: Active & KYC Verified
+Nominee Registered: Yes
+------------------------------------------------------------
+Authorized Signature & Bank Seal

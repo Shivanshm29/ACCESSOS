@@ -1,0 +1,56 @@
+Analyze the following sanitized page representation and produce a structured JSON response matching the schema below.
+
+USER GOAL:
+{user_goal_section}
+
+SANITIZED PAGE INPUT:
+{sanitized_input_json}
+
+DETERMINISTIC ACCESSIBILITY BASELINE CONTEXT:
+{deterministic_findings_summary}
+
+RESPONSE JSON SCHEMA:
+{
+  "pageUnderstanding": {
+    "pageType": "APPLICATION",
+    "pagePurpose": "Concise description of what the page is for.",
+    "confidence": 0.95
+  },
+  "processUnderstanding": {
+    "processName": "Human-readable name of the process",
+    "goal": "Expected accomplishment of the user",
+    "currentStage": "Current step or stage",
+    "totalStages": 8,
+    "majorStages": ["Stage 1", "Stage 2", ...],
+    "requiredInformationCategories": ["Personal Details", "Academic Records", ...],
+    "requiredDocumentCategories": ["Transcripts", "Income Certificate", ...],
+    "likelyNextAction": "Plain-language description of next step"
+  },
+  "barriers": [
+    {
+      "id": "ai-barrier-001",
+      "type": "UNFAMILIAR_TERM",
+      "severity": "HIGH",
+      "title": "Unfamiliar institutional terminology",
+      "explanation": "Specific explanation grounded in evidence.",
+      "evidence": [
+        {
+          "kind": "instruction",
+          "text": "Exact text cited from input",
+          "elementId": "accessos-inst-002"
+        }
+      ],
+      "affectedElementIds": ["accessos-inst-002"],
+      "suggestedSimplification": "Provide a plain-language explanation.",
+      "confidence": 0.9
+    }
+  ],
+  "nextAction": {
+    "description": "Recommended immediate next user action",
+    "targetElementId": "accessos-btn-002",
+    "stage": "Stage Name"
+  },
+  "summary": "Concise executive overview of page complexity and key recommendations."
+}
+
+Respond ONLY with valid JSON.

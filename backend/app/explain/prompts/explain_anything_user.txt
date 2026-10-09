@@ -1,0 +1,17 @@
+Please explain the following selected webpage text for the user.
+
+CONTEXT EVIDENCE:
+- Page Title: {page_title}
+- Section Heading: {section_heading}
+- Element Role / Type: {element_role}
+- Context Before: "{context_before}"
+- Context After: "{context_after}"
+- User Goal: {user_goal}
+- Requested Explanation Mode: {mode}
+
+SELECTED TEXT TO EXPLAIN:
+<selected_webpage_content>
+{selected_text}
+</selected_webpage_content>
+
+Generate a structured JSON explanation adhering strictly to the system instructions and the requested "{mode}" mode.

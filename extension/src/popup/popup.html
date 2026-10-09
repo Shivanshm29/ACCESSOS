@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACCESSOS</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <div class="brand">
+        <span class="logo-mark" aria-hidden="true">A</span>
+        <h1 class="brand-title">ACCESSOS</h1>
+      </div>
+      <span class="badge">Accessibility Copilot</span>
+    </header>
+
+    <p class="tagline">Accessibility Layer for Digital Processes</p>
+
+    <main class="popup-body">
+      <button type="button" id="analyze-btn" class="primary-button">
+        Analyze Current Page
+      </button>
+
+      <!-- Status & Output Area -->
+      <section id="status-area" class="status-area" aria-live="polite">
+        <!-- Status message (IDLE, ANALYZING) -->
+        <p id="status-message" class="status-message">Ready to analyze this page.</p>
+
+        <!-- Success result card (shown on SUCCESS) -->
+        <div id="result-card" class="result-card hidden">
+          <div class="card-header">
+            <span class="status-pill">Page analyzed</span>
+            <h2 id="result-title" class="result-title">-</h2>
+            <div class="url-line">
+              <span class="result-label">URL:</span>
+              <span id="result-url" class="result-value">-</span>
+            </div>
+            <!-- Hidden backward-compatibility elements -->
+            <span id="result-page-type" class="hidden">Web Page</span>
+            <span id="result-elements" class="hidden">0</span>
+          </div>
+
+          <!-- Compact Semantic Metrics Grid -->
+          <div class="metrics-grid">
+            <div class="metric-row">
+              <span class="metric-label">Sections</span>
+              <span id="metric-sections" class="metric-val">0</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Fields</span>
+              <span id="metric-fields" class="metric-val">0</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Required</span>
+              <span id="metric-required" class="metric-val">0</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Buttons</span>
+              <span id="metric-buttons" class="metric-val">0</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Links</span>
+              <span id="metric-links" class="metric-val">0</span>
+            </div>
+          </div>
+
+          <!-- Phase 4 Deterministic Accessibility Baseline Card -->
+          <div id="accessibility-score-box" class="score-card">
+            <div class="score-header">
+              <span class="score-label">ACCESSOS Accessibility Baseline</span>
+              <span id="score-band-badge" class="score-badge">-</span>
+            </div>
+            <div class="score-display">
+              <span class="score-num" id="accessibility-score-val">--</span>
+              <span class="score-den">/ 100</span>
+            </div>
+            <div class="severity-breakdown">
+              <div class="sev-item"><span class="sev-tag sev-critical">Critical</span> <span id="sev-critical" class="sev-count">0</span></div>
+              <div class="sev-item"><span class="sev-tag sev-high">High</span> <span id="sev-high" class="sev-count">0</span></div>
+              <div class="sev-item"><span class="sev-tag sev-medium">Medium</span> <span id="sev-medium" class="sev-count">0</span></div>
+              <div class="sev-item"><span class="sev-tag sev-low">Low</span> <span id="sev-low" class="sev-count">0</span></div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="toggle-buttons-group">
+            <button type="button" id="toggle-findings-btn" class="details-toggle-btn">
+              [ View Accessibility Findings ]
+            </button>
+            <button type="button" id="toggle-details-btn" class="details-toggle-btn secondary-toggle">
+              [ View Page Metrics ]
+            </button>
+          </div>
+
+          <!-- Phase 4 Findings Panel (Collapsible) -->
+          <div id="findings-panel" class="findings-panel hidden">
+            <h3 class="findings-title">Accessibility Findings (<span id="findings-count">0</span>)</h3>
+            <div id="findings-list" class="findings-list">
+              <!-- Dynamically populated finding cards -->
+            </div>
+          </div>
+
+          <!-- Phase 6 Guided Mode Trigger Button -->
+          <div class="guided-trigger-container">
+            <button type="button" id="start-guided-btn" class="guided-trigger-button" aria-label="Start Guided Mode step-by-step assistance">
+              🧭 <span data-i18n="tab_guided">Guided Mode</span>
+            </button>
+            <span id="guided-status-indicator" class="guided-status-indicator hidden" aria-live="polite">Preparing guidance...</span>
+          </div>
+
+          <!-- Phase 7 Explain Anything Trigger Button -->
+          <div class="explain-trigger-container">
+            <button type="button" id="explain-btn" class="explain-trigger-button" aria-label="Explain selected text with ACCESSOS">
+              💡 <span data-i18n="tab_explain">Explain Anything</span>
+            </button>
+            <span id="explain-status-indicator" class="explain-status-indicator hidden" aria-live="polite">Explaining text...</span>
+          </div>
+
+          <!-- Phase 9 Document Intelligence Trigger Button -->
+          <div class="doc-trigger-container">
+            <button type="button" id="doc-intel-btn" class="doc-trigger-button" aria-label="Open Document Intelligence analysis">
+              📄 <span data-i18n="tab_doc_intel">Document Intelligence</span>
+            </button>
+            <span id="doc-status-indicator" class="doc-status-indicator hidden" aria-live="polite">Analyzing document...</span>
+          </div>
+
+          <!-- Phase 10 User Preferences Trigger Button -->
+          <div class="pref-trigger-container">
+            <button type="button" id="preferences-btn" class="pref-trigger-button" aria-label="Open User Preferences">
+              ⚙️ <span data-i18n="tab_preferences">Preferences</span>
+            </button>
+          </div>
+
+          <!-- Phase 12 Completion Checker Trigger Button -->
+          <div class="completion-trigger-container">
+            <button type="button" id="completion-checker-btn" class="completion-trigger-button" aria-label="Open Completion Checker">
+              ✅ <span data-i18n="tab_completion">Completion Checker</span>
+            </button>
+            <span id="completion-status-indicator" class="completion-status-indicator hidden" aria-live="polite">Evaluating completion...</span>
+          </div>
+
+          <!-- Phase 13 Analytics Trigger Button -->
+          <div class="analytics-trigger-container">
+            <button type="button" id="analytics-btn" class="analytics-trigger-button" aria-label="Open Local Analytics Dashboard">
+              📊 <span data-i18n="tab_analytics">Analytics</span>
+            </button>
+          </div>
+
+          <!-- Phase 5 AI Analysis Trigger Button -->
+          <div class="ai-trigger-container">
+            <button type="button" id="analyze-ai-btn" class="ai-trigger-button">
+              ✦ Analyze with AI
+            </button>
+            <span id="ai-status-indicator" class="ai-status-indicator hidden">Analyzing with AI...</span>
+          </div>
+
+          <!-- Phase 5 AI Page Analysis Card -->
+          <section id="ai-analysis-card" class="ai-card hidden">
+            <div class="ai-header">
+              <div class="ai-title-row">
+                <span class="ai-badge">AI PAGE ANALYSIS</span>
+                <span id="ai-model-tag" class="ai-model-tag">AI Model</span>
+              </div>
+              <p class="ai-disclaimer-note">Semantic, linguistic, and process reasoning (LLM-assisted)</p>
+            </div>
+
+            <!-- AI Page & Process Understanding -->
+            <div class="ai-summary-grid">
+              <div class="ai-meta-item">
+                <span class="ai-meta-label">Page Purpose:</span>
+                <span id="ai-page-purpose" class="ai-meta-val">-</span>
+              </div>
+              <div class="ai-meta-item">
+                <span class="ai-meta-label">Process:</span>
+                <span id="ai-process-name" class="ai-meta-val">-</span>
+              </div>
+              <div class="ai-meta-item">
+                <span class="ai-meta-label">Likely Goal:</span>
+                <span id="ai-process-goal" class="ai-meta-val">-</span>
+              </div>
+            </div>
+
+            <!-- Next Action Callout -->
+            <div id="ai-next-action-box" class="ai-next-action-box">
+              <div class="next-action-label">Likely Next Step:</div>
+              <div id="ai-next-action-text" class="next-action-text">-</div>
+              <span id="ai-next-action-target" class="next-action-target hidden"></span>
+            </div>
+
+            <!-- AI Barriers List -->
+            <div class="ai-barriers-container">
+              <h3 class="ai-barriers-title">AI-Identified Process Barriers (<span id="ai-barriers-count">0</span>)</h3>
+              <div id="ai-barriers-list" class="ai-barriers-list">
+                <!-- Dynamically populated AI barrier cards -->
+              </div>
+            </div>
+          </section>
+
+          <!-- AI Error Notice -->
+          <div id="ai-error-banner" class="ai-error-banner hidden">
+            <span id="ai-error-text">AI analysis is temporarily unavailable.</span>
+          </div>
+
+          <!-- Phase 6 Guided Mode Panel -->
+          <section id="guided-panel" class="guided-panel hidden" role="region" aria-label="Guided Mode" tabindex="-1">
+            <div class="guided-panel-header">
+              <div class="guided-badge-row">
+                <span class="guided-badge">GUIDED MODE</span>
+                <span id="guided-stage-badge" class="guided-stage-badge">Stage 1 of 8</span>
+              </div>
+              <h2 id="guided-title" class="guided-title">Scholarship Application</h2>
+              <p id="guided-stage-name" class="guided-stage-name">Applicant Primary Information</p>
+
+              <!-- Progress Indicator -->
+              <div class="guided-progress-container" role="progressbar" id="guided-progress-bar" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100" aria-label="Process progress">
+                <div id="guided-progress-fill" class="guided-progress-fill" style="width: 12%;"></div>
+              </div>
+              <div class="guided-progress-meta">
+                <span id="guided-progress-percent" class="guided-progress-percent">12% Complete</span>
+                <span id="guided-step-counter" class="guided-step-counter">Step 1 of 4</span>
+              </div>
+            </div>
+
+            <!-- Step Content Card -->
+            <div class="guided-step-card" id="guided-step-card" aria-live="polite">
+              <div class="guided-step-header">
+                <span id="guided-step-action-tag" class="guided-action-tag">ENTER</span>
+                <span id="guided-step-required-tag" class="guided-required-tag">Required</span>
+              </div>
+              <h3 id="guided-step-title" class="guided-step-title">Enter your first name</h3>
+              <p id="guided-step-desc" class="guided-step-desc">Enter the applicant's official first name.</p>
+
+              <!-- Why it matters -->
+              <div class="guided-why-matters">
+                <strong class="guided-why-label">Why this matters:</strong>
+                <p id="guided-step-why" class="guided-why-text">Your name is required to identify the applicant.</p>
+              </div>
+
+              <!-- Barrier note if present -->
+              <div id="guided-barrier-box" class="guided-barrier-box hidden">
+                <strong class="guided-barrier-label">⚠️ Potential Barrier:</strong>
+                <p id="guided-step-barrier" class="guided-barrier-text"></p>
+              </div>
+
+              <!-- Action targeting button -->
+              <div class="guided-step-actions">
+                <button type="button" id="guided-show-target-btn" class="guided-target-button" aria-label="Show target element on page">
+                  🔍 Show on page
+                </button>
+                <button type="button" id="guided-assist-btn" class="guided-assist-button" aria-label="Assist with this step">
+                  ⚡ Assist me
+                </button>
+                <span id="guided-target-feedback" class="guided-target-feedback" aria-live="polite"></span>
+              </div>
+            </div>
+
+            <!-- Step Navigation Controls -->
+            <div class="guided-navigation">
+              <button type="button" id="guided-prev-btn" class="guided-nav-btn" aria-label="Previous step" disabled>
+                ← Previous
+              </button>
+              <button type="button" id="guided-next-btn" class="guided-nav-btn primary-nav" aria-label="Next step">
+                Next →
+              </button>
+            </div>
+
+            <div class="guided-exit-row">
+              <button type="button" id="guided-exit-btn" class="guided-exit-btn" aria-label="Exit Guided Mode">
+                ✕ Exit Guided Mode
+              </button>
+            </div>
+
+            <!-- Guided error notice -->
+            <div id="guided-error-banner" class="ai-error-banner hidden" role="alert">
+              <span id="guided-error-text">Guided Mode is temporarily unavailable.</span>
+            </div>
+          </section>
+
+          <!-- Phase 7 Explain Anything Panel -->
+          <section id="explain-panel" class="explain-panel hidden" role="region" aria-label="Explain Anything" tabindex="-1">
+            <div class="explain-panel-header">
+              <div class="explain-badge-row">
+                <span class="explain-badge">EXPLAIN ANYTHING</span>
+                <span id="explain-mode-badge" class="explain-mode-badge">Simple</span>
+              </div>
+              <button type="button" id="explain-close-btn" class="explain-close-btn" aria-label="Close explanation">✕</button>
+            </div>
+
+            <!-- Selection quote box -->
+            <div class="explain-selection-box">
+              <span class="explain-selection-label">Selected text:</span>
+              <p id="explain-selected-text" class="explain-selected-quote">"..."</p>
+              <span id="explain-element-tag" class="explain-element-tag hidden"></span>
+            </div>
+
+            <!-- Mode selector tabs -->
+            <div class="explain-modes-group" role="group" aria-label="Explanation modes">
+              <button type="button" class="explain-mode-tab active" data-mode="SIMPLE">Simple</button>
+              <button type="button" class="explain-mode-tab" data-mode="DETAILED">Detailed</button>
+              <button type="button" class="explain-mode-tab" data-mode="PLAIN_LANGUAGE">Plain</button>
+              <button type="button" class="explain-mode-tab" data-mode="EXAMPLE">Example</button>
+              <button type="button" class="explain-mode-tab" data-mode="KEY_POINTS">Key Points</button>
+            </div>
+
+            <!-- Explanation Content Container -->
+            <div id="explain-content-card" class="explain-content-card" aria-live="polite">
+              <div class="explain-main-section">
+                <p id="explain-main-text" class="explain-main-text">-</p>
+              </div>
+
+              <!-- Why it matters -->
+              <div id="explain-why-box" class="explain-why-box hidden">
+                <strong class="explain-why-label">Why this matters:</strong>
+                <p id="explain-why-text" class="explain-why-text">-</p>
+              </div>
+
+              <!-- Example -->
+              <div id="explain-example-box" class="explain-example-box hidden">
+                <strong class="explain-example-label">Example:</strong>
+                <p id="explain-example-text" class="explain-example-text">-</p>
+              </div>
+
+              <!-- Key Points -->
+              <div id="explain-keypoints-box" class="explain-keypoints-box hidden">
+                <strong class="explain-keypoints-label">Key Points:</strong>
+                <ul id="explain-keypoints-list" class="explain-keypoints-list"></ul>
+              </div>
+
+              <!-- Terminology -->
+              <div id="explain-terms-box" class="explain-terms-box hidden">
+                <strong class="explain-terms-label">Key Terms:</strong>
+                <div id="explain-terms-list" class="explain-terms-list"></div>
+              </div>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="explain-error-banner" class="ai-error-banner hidden" role="alert">
+              <span id="explain-error-text">No text currently selected on the page. Highlight any text on the webpage and try again.</span>
+              <button type="button" id="explain-retry-btn" class="explain-retry-btn">Retry</button>
+            </div>
+          </section>
+
+          <!-- Phase 9 Document Intelligence Panel -->
+          <section id="doc-panel" class="doc-panel hidden" role="region" aria-label="Document Intelligence" tabindex="-1">
+            <div class="doc-panel-header">
+              <div class="doc-badge-row">
+                <span class="doc-badge">DOCUMENT INTELLIGENCE</span>
+                <span id="doc-type-badge" class="doc-type-badge">Unclassified</span>
+              </div>
+              <button type="button" id="doc-close-btn" class="doc-close-btn" aria-label="Close document panel">✕</button>
+            </div>
+
+            <!-- Safe Local Document Selector -->
+            <div class="doc-picker-box">
+              <label for="doc-file-input" class="doc-picker-label">Select Document for Analysis:</label>
+              <input type="file" id="doc-file-input" class="doc-file-input" accept=".pdf,.png,.jpg,.jpeg,.txt" aria-describedby="doc-picker-help" />
+              <p id="doc-picker-help" class="doc-picker-hint">Supported: PDF, PNG, JPEG, TXT (Max: 10 MB, 20 pages).</p>
+              <div class="doc-selected-meta hidden" id="doc-selected-meta">
+                <span id="doc-selected-name" class="doc-filename">-</span>
+                <span id="doc-selected-size" class="doc-filesize">-</span>
+              </div>
+              <button type="button" id="doc-run-btn" class="doc-run-button" disabled>
+                Analyze Document
+              </button>
+            </div>
+
+            <!-- Disclaimer Notice -->
+            <div class="doc-safety-notice">
+              <span class="doc-safety-icon">ℹ️</span>
+              <span class="doc-safety-text">
+                Document Intelligence is an assistive analysis capability. It never automatically uploads documents, fills fields, or submits forms.
+              </span>
+            </div>
+
+            <!-- Document Analysis Results Card -->
+            <div id="doc-results-card" class="doc-results-card hidden" aria-live="polite">
+              <!-- Classification summary -->
+              <div class="doc-classification-box">
+                <div class="doc-class-row">
+                  <span class="doc-class-label">Detected Category:</span>
+                  <strong id="doc-class-cat" class="doc-class-cat">-</strong>
+                  <span id="doc-class-conf" class="doc-conf-pill">-</span>
+                </div>
+                <p id="doc-class-reason" class="doc-class-reason">-</p>
+                <div id="doc-evidence-box" class="doc-evidence-box hidden">
+                  <span class="doc-evidence-label">Document Evidence:</span>
+                  <blockquote id="doc-evidence-text" class="doc-evidence-text">-</blockquote>
+                </div>
+              </div>
+
+              <!-- Extracted facts list -->
+              <div class="doc-facts-section">
+                <h4 class="doc-section-title">Extracted Document Facts (<span id="doc-facts-count">0</span>)</h4>
+                <div id="doc-facts-list" class="doc-facts-list">
+                  <!-- Dynamically populated fact cards -->
+                </div>
+              </div>
+
+              <!-- Webpage requirement matches -->
+              <div class="doc-matches-section">
+                <h4 class="doc-section-title">Webpage Requirement Matches (<span id="doc-matches-count">0</span>)</h4>
+                <div id="doc-matches-list" class="doc-matches-list">
+                  <!-- Dynamically populated requirement matches -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Error / Warning Notice -->
+            <div id="doc-error-banner" class="ai-error-banner hidden" role="alert">
+              <span id="doc-error-text">Document processing error.</span>
+            </div>
+          </section>
+
+          <!-- Phase 10 User Preferences Panel -->
+          <section id="preferences-panel" class="preferences-panel hidden" role="region" aria-label="User Preferences" tabindex="-1">
+            <div class="pref-panel-header">
+              <div class="pref-badge-row">
+                <span class="pref-badge" data-i18n="tab_preferences">PREFERENCES</span>
+              </div>
+              <button type="button" id="pref-close-btn" class="pref-close-btn" aria-label="Close preferences panel">✕</button>
+            </div>
+
+            <!-- Toast / Status message -->
+            <div id="pref-saved-toast" class="pref-saved-toast hidden" role="status" aria-live="polite">
+              <span data-i18n="pref_saved_toast">Preferences saved</span>
+            </div>
+
+            <!-- General Preferences -->
+            <div class="pref-section">
+              <h3 class="pref-section-title" data-i18n="pref_general_title">General</h3>
+              
+              <div class="pref-field">
+                <label for="pref-language-select" class="pref-label" data-i18n="pref_language_label">Language</label>
+                <select id="pref-language-select" class="pref-select">
+                  <option value="en">English (Default)</option>
+                  <option value="hi">हिंदी (Hindi)</option>
+                </select>
+              </div>
+
+              <div class="pref-field">
+                <label for="pref-explanation-select" class="pref-label" data-i18n="pref_explanation_complexity_label">Explanation Complexity</label>
+                <select id="pref-explanation-select" class="pref-select">
+                  <option value="SIMPLE">Simple (Brief, plain language)</option>
+                  <option value="STANDARD" selected>Standard (Balanced context)</option>
+                  <option value="DETAILED">Detailed (In-depth analysis)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Visual Assistance -->
+            <div class="pref-section">
+              <h3 class="pref-section-title" data-i18n="pref_visual_title">Visual Assistance</h3>
+              
+              <label class="pref-checkbox-row">
+                <input type="checkbox" id="pref-high-contrast-cb" class="pref-checkbox" />
+                <span class="pref-cb-label" data-i18n="pref_high_contrast_label">High Contrast Mode</span>
+              </label>
+
+              <label class="pref-checkbox-row">
+                <input type="checkbox" id="pref-larger-text-cb" class="pref-checkbox" />
+                <span class="pref-cb-label" data-i18n="pref_larger_text_label">Larger Text</span>
+              </label>
+
+              <label class="pref-checkbox-row">
+                <input type="checkbox" id="pref-reduced-density-cb" class="pref-checkbox" />
+                <span class="pref-cb-label" data-i18n="pref_reduced_density_label">Reduced Density (Relaxed Spacing)</span>
+              </label>
+            </div>
+
+            <!-- Guided Mode Settings -->
+            <div class="pref-section">
+              <h3 class="pref-section-title" data-i18n="pref_guided_title">Guided Mode</h3>
+              
+              <label class="pref-checkbox-row">
+                <input type="checkbox" id="pref-guided-why-cb" class="pref-checkbox" checked />
+                <span class="pref-cb-label" data-i18n="pref_guided_why_label">Show 'Why This Matters'</span>
+              </label>
+
+              <label class="pref-checkbox-row">
+                <input type="checkbox" id="pref-guided-warnings-cb" class="pref-checkbox" checked />
+                <span class="pref-cb-label" data-i18n="pref_guided_warnings_label">Show Barrier Warnings</span>
+              </label>
+
+              <label class="pref-checkbox-row">
+                <input type="checkbox" id="pref-guided-progress-cb" class="pref-checkbox" checked />
+                <span class="pref-cb-label" data-i18n="pref_guided_progress_label">Show Progress Indicator</span>
+              </label>
+            </div>
+
+            <!-- Interactions -->
+            <div class="pref-section">
+              <h3 class="pref-section-title" data-i18n="pref_interaction_title">Interactions</h3>
+              
+              <div class="pref-field">
+                <label for="pref-confirm-verbosity-select" class="pref-label" data-i18n="pref_confirmation_verbosity_label">Confirmation Verbosity</label>
+                <select id="pref-confirm-verbosity-select" class="pref-select">
+                  <option value="STANDARD" selected>Standard Confirmation</option>
+                  <option value="DETAILED">Detailed Context & Safety Explanations</option>
+                </select>
+              </div>
+              <p class="pref-safety-note" data-i18n="safety_immutable_notice">
+                Safety controls and confirmation gates remain strictly mandatory.
+              </p>
+            </div>
+
+            <!-- Document Intelligence -->
+            <div class="pref-section">
+              <h3 class="pref-section-title" data-i18n="pref_docs_title">Document Intelligence</h3>
+              
+              <label class="pref-checkbox-row">
+                <input type="checkbox" id="pref-doc-evidence-cb" class="pref-checkbox" checked />
+                <span class="pref-cb-label" data-i18n="pref_doc_evidence_label">Show Grounded Evidence Snippets</span>
+              </label>
+
+              <label class="pref-checkbox-row">
+                <input type="checkbox" id="pref-doc-confidence-cb" class="pref-checkbox" checked />
+                <span class="pref-cb-label" data-i18n="pref_doc_confidence_label">Show Confidence Scores</span>
+              </label>
+            </div>
+
+            <!-- Local Analytics -->
+            <div class="pref-section">
+              <h3 class="pref-section-title" data-i18n="pref_analytics_title">Local Analytics</h3>
+              
+              <label class="pref-checkbox-row">
+                <input type="checkbox" id="pref-analytics-enabled-cb" class="pref-checkbox" checked />
+                <span class="pref-cb-label" data-i18n="pref_analytics_enabled_label">Enable Local Analytics (On-device only)</span>
+              </label>
+
+              <div class="pref-field-action">
+                <button type="button" id="pref-analytics-clear-btn" class="pref-clear-btn" data-i18n="pref_analytics_clear_btn">
+                  Clear Analytics Data
+                </button>
+              </div>
+            </div>
+
+            <!-- Reset Actions -->
+            <div class="pref-actions">
+              <button type="button" id="pref-reset-btn" class="pref-reset-button" data-i18n="pref_reset_btn">
+                Reset to Defaults
+              </button>
+            </div>
+          </section>
+
+          <!-- Phase 12 Completion Checker Panel -->
+          <section id="completion-panel" class="completion-panel hidden" role="region" aria-label="Completion Checker" tabindex="-1">
+            <div class="completion-panel-header">
+              <div class="completion-badge-row">
+                <span class="completion-badge">COMPLETION CHECKER</span>
+                <span id="completion-overall-badge" class="completion-status-badge badge-incomplete">INCOMPLETE</span>
+              </div>
+              <button type="button" id="completion-close-btn" class="completion-close-btn" aria-label="Close completion panel">✕</button>
+            </div>
+
+            <!-- Summary & Progress Card -->
+            <div class="completion-summary-card">
+              <div class="completion-progress-header">
+                <span class="completion-progress-title">Overall Progress</span>
+                <span id="completion-percent-label" class="completion-percent-label">0%</span>
+              </div>
+              <div class="completion-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="completion-progress-container">
+                <div id="completion-progress-fill" class="completion-progress-fill" style="width: 0%;"></div>
+              </div>
+              <div class="completion-meta-row">
+                <div class="completion-meta-item">
+                  <span class="completion-meta-label">Current Stage:</span>
+                  <strong id="completion-current-stage" class="completion-meta-val">-</strong>
+                </div>
+                <div class="completion-meta-item">
+                  <span class="completion-meta-label">Status:</span>
+                  <strong id="completion-status-label" class="completion-meta-val">INCOMPLETE</strong>
+                </div>
+              </div>
+              <button type="button" id="completion-evaluate-btn" class="completion-evaluate-button">
+                Re-evaluate Completion
+              </button>
+            </div>
+
+            <!-- Assistive Safety Notice -->
+            <div class="completion-safety-notice">
+              <span class="completion-safety-icon">ℹ️</span>
+              <span class="completion-safety-text">
+                Assistive verification only. ACCESSOS never automatically modifies form inputs or submits applications.
+              </span>
+            </div>
+
+            <!-- 8 Workflow Stages Summary -->
+            <div class="completion-section">
+              <h4 class="completion-section-title">Workflow Stages</h4>
+              <div id="completion-stages-list" class="completion-stages-list">
+                <!-- Dynamically populated stages -->
+              </div>
+            </div>
+
+            <!-- Blocking Issues -->
+            <div class="completion-section">
+              <div class="completion-section-header">
+                <h4 class="completion-section-title">Blocking Issues (<span id="completion-blocking-count">0</span>)</h4>
+              </div>
+              <div id="completion-blocking-list" class="completion-issues-list">
+                <!-- Dynamically populated blocking issues -->
+              </div>
+            </div>
+
+            <!-- Warnings & Non-blocking Notices -->
+            <div class="completion-section">
+              <div class="completion-section-header">
+                <h4 class="completion-section-title">Warnings & Notices (<span id="completion-warnings-count">0</span>)</h4>
+              </div>
+              <div id="completion-warnings-list" class="completion-issues-list">
+                <!-- Dynamically populated warnings -->
+              </div>
+            </div>
+
+            <!-- Required Documents Status -->
+            <div class="completion-section">
+              <div class="completion-section-header">
+                <h4 class="completion-section-title">Supporting Documents (<span id="completion-docs-count">0</span>)</h4>
+              </div>
+              <div id="completion-docs-list" class="completion-docs-list">
+                <!-- Dynamically populated document statuses -->
+              </div>
+            </div>
+
+            <!-- Cross-Field Consistency Checks -->
+            <div class="completion-section">
+              <div class="completion-section-header">
+                <h4 class="completion-section-title">Consistency Checks (<span id="completion-consistency-count">0</span>)</h4>
+              </div>
+              <div id="completion-consistency-list" class="completion-consistency-list">
+                <!-- Dynamically populated consistency checks -->
+              </div>
+            </div>
+
+            <!-- Completed Requirements -->
+            <div class="completion-section">
+              <div class="completion-section-header">
+                <h4 class="completion-section-title">Completed Items (<span id="completion-completed-count">0</span>)</h4>
+              </div>
+              <div id="completion-completed-list" class="completion-completed-list">
+                <!-- Dynamically populated completed items -->
+              </div>
+            </div>
+          </section>
+
+          <!-- Phase 13 Analytics Dashboard Panel -->
+          <section id="analytics-panel" class="analytics-panel hidden" role="region" aria-label="Local Analytics" tabindex="-1">
+            <div class="analytics-panel-header">
+              <div class="analytics-badge-row">
+                <span class="analytics-badge">LOCAL ANALYTICS</span>
+                <span id="analytics-events-badge" class="analytics-events-badge">0 Events</span>
+              </div>
+              <button type="button" id="analytics-close-btn" class="analytics-close-btn" aria-label="Close analytics panel">✕</button>
+            </div>
+
+            <!-- Privacy Guarantee Notice -->
+            <div class="analytics-privacy-notice">
+              <span class="analytics-privacy-icon">🔒</span>
+              <span class="analytics-privacy-text" data-i18n="analytics_dashboard_notice">
+                All analytics remain 100% on your device. Zero telemetry or external transmission.
+              </span>
+            </div>
+
+            <!-- Dashboard Action Row -->
+            <div class="analytics-actions-row">
+              <button type="button" id="analytics-refresh-btn" class="analytics-action-button">
+                🔄 Refresh Metrics
+              </button>
+              <button type="button" id="analytics-clear-btn" class="analytics-action-button danger">
+                🗑️ Clear Data
+              </button>
+            </div>
+
+            <!-- Session Metadata -->
+            <div class="analytics-meta-card">
+              <div class="analytics-meta-item">
+                <span class="analytics-meta-label">Session ID:</span>
+                <span id="analytics-session-id" class="analytics-meta-val">-</span>
+              </div>
+              <div class="analytics-meta-item">
+                <span class="analytics-meta-label">Session Events:</span>
+                <span id="analytics-session-events" class="analytics-meta-val">0</span>
+              </div>
+            </div>
+
+            <!-- Section 1: Accessibility -->
+            <div class="analytics-section">
+              <h4 class="analytics-section-title">Accessibility Impact</h4>
+              <div class="analytics-grid">
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-a11y-analyses">0</span>
+                  <span class="analytics-tile-label">Analyses Run</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-a11y-barriers">0</span>
+                  <span class="analytics-tile-label">Total Barriers</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-a11y-score">--</span>
+                  <span class="analytics-tile-label">Average Score</span>
+                </div>
+              </div>
+              <div class="analytics-breakdown">
+                <span class="sev-tag sev-critical">Critical: <strong id="stat-a11y-crit">0</strong></span>
+                <span class="sev-tag sev-high">High: <strong id="stat-a11y-high">0</strong></span>
+                <span class="sev-tag sev-medium">Medium: <strong id="stat-a11y-med">0</strong></span>
+                <span class="sev-tag sev-low">Low: <strong id="stat-a11y-low">0</strong></span>
+              </div>
+            </div>
+
+            <!-- Section 2: Guided Mode -->
+            <div class="analytics-section">
+              <h4 class="analytics-section-title">Guided Mode Progression</h4>
+              <div class="analytics-grid">
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-guided-started">0</span>
+                  <span class="analytics-tile-label">Started</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-guided-steps">0</span>
+                  <span class="analytics-tile-label">Steps Done</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-guided-rate">0%</span>
+                  <span class="analytics-tile-label">Completion Rate</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3: Explain Anything -->
+            <div class="analytics-section">
+              <h4 class="analytics-section-title">Explain Anything Usage</h4>
+              <div class="analytics-grid">
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-explain-requests">0</span>
+                  <span class="analytics-tile-label">Requests</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-explain-simple">0</span>
+                  <span class="analytics-tile-label">Simple Mode</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-explain-standard">0</span>
+                  <span class="analytics-tile-label">Standard Mode</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4: Document Intelligence -->
+            <div class="analytics-section">
+              <h4 class="analytics-section-title">Document Intelligence</h4>
+              <div class="analytics-grid">
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-docs-analyzed">0</span>
+                  <span class="analytics-tile-label">Documents</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-docs-matches">0</span>
+                  <span class="analytics-tile-label">Matches</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-docs-ambiguous">0</span>
+                  <span class="analytics-tile-label">Ambiguities</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 5: Completion Checker -->
+            <div class="analytics-section">
+              <h4 class="analytics-section-title">Completion Verification</h4>
+              <div class="analytics-grid">
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-comp-checks">0</span>
+                  <span class="analytics-tile-label">Checks Run</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-comp-complete">0</span>
+                  <span class="analytics-tile-label">Complete</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-comp-blockers">0</span>
+                  <span class="analytics-tile-label">Blockers</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 6: Interaction Safety -->
+            <div class="analytics-section">
+              <h4 class="analytics-section-title">Safe Interaction Gates</h4>
+              <div class="analytics-grid">
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-safe-confirmed">0</span>
+                  <span class="analytics-tile-label">Confirmed</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-safe-blocked">0</span>
+                  <span class="analytics-tile-label">Blocked</span>
+                </div>
+                <div class="analytics-tile">
+                  <span class="analytics-tile-num" id="stat-safe-cancelled">0</span>
+                  <span class="analytics-tile-label">Cancelled</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Structured Details Panel (Collapsible) -->
+          <div id="details-panel" class="details-panel hidden">
+            <div class="details-section">
+              <h3 class="details-subtitle">Form Complexity</h3>
+              <ul class="details-list">
+                <li>Total Fields: <strong id="detail-field-count">0</strong></li>
+                <li>Required Fields: <strong id="detail-req-count">0</strong></li>
+                <li>File Uploads: <strong id="detail-file-count">0</strong></li>
+                <li>Sections: <strong id="detail-sec-count">0</strong></li>
+              </ul>
+            </div>
+
+            <div class="details-section">
+              <h3 class="details-subtitle">Raw Signal Counts</h3>
+              <ul id="signals-list" class="signals-list">
+                <!-- Dynamically populated -->
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unsupported page notice (shown on UNSUPPORTED_PAGE) -->
+        <div id="unsupported-card" class="notice-card unsupported-card hidden">
+          <p class="notice-title">ACCESSOS cannot analyze this page.</p>
+          <p class="notice-desc">Browser internal or protected system pages cannot be inspected.</p>
+        </div>
+
+        <!-- Error notice (shown on ERROR) -->
+        <div id="error-card" class="notice-card error-card hidden">
+          <p id="error-message" class="error-title">An unexpected error occurred.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="popup-footer">
+      <button type="button" id="reset-demo-btn" class="button secondary" title="Safely restore demo state">Reset Demo</button>
+      <button type="button" id="open-options-btn" class="button secondary">Settings</button>
+    </footer>
+  </div>
+  <script type="module" src="popup.ts"></script>
+</body>
+</html>

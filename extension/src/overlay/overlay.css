@@ -1,0 +1,14 @@
+/* ACCESSOS Guided Mode Overlay Base Styles */
+.accessos-overlay-root {
+  position: fixed;
+  z-index: 2147483647;
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.accessos-highlight-box {
+  border: 2px solid #2563eb;
+  border-radius: 4px;
+  background: rgba(37, 99, 235, 0.08);
+  transition: all 0.2s ease-in-out;
+}

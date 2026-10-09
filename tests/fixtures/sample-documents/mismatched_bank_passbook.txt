@@ -1,0 +1,16 @@
+STATE BANK OF INDIA - PUNE MAIN BRANCH
+SAVINGS BANK ACCOUNT PASSBOOK STATEMENT
+------------------------------------------------------------
+Account Holder: Sunita Sharma
+Account Number: 987654321098
+Customer ID (CIF): 78901234567
+Branch IFSC Code: SBIN0001234
+Branch Code: 01234 (Pune Main)
+MICR Code: 411002001
+Account Type: Resident Savings Bank Account
+Account Status: Active & KYC Verified
+Nominee Registered: Yes
+------------------------------------------------------------
+Authorized Signature & Bank Seal
+[NOTE FOR DEMONSTRATION]: Account holder name does not match applicant 'Aarav Sharma'.
+Used to demonstrate ACCESSOS Document Intelligence mismatch & fraud protection.

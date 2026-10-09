@@ -1,0 +1,40 @@
+Generate a step-by-step Guided Mode workflow for the following webpage and stage.
+
+USER INTENT:
+{user_goal_section}
+
+STAGE FOCUS:
+{stage_instruction}
+
+SANITIZED PAGE REPRESENTATION:
+{sanitized_page_json}
+
+AI PAGE & PROCESS ANALYSIS CONTEXT:
+{ai_analysis_context}
+
+RESPONSE JSON SCHEMA:
+{{
+  "title": "National Student Scholarship Application Guide",
+  "overview": "Brief overview of what the user needs to accomplish in this stage.",
+  "currentStage": "Stage Name",
+  "totalStages": 8,
+  "progressPercent": 12.5,
+  "steps": [
+    {{
+      "stepId": "step-001",
+      "order": 1,
+      "title": "Enter Applicant First Name",
+      "description": "Enter your legal first name as it appears on your academic records.",
+      "targetElementId": "accessos-field-001",
+      "actionType": "ENTER",
+      "whyItMatters": "This establishes your primary identity for scholarship eligibility.",
+      "required": true,
+      "completed": false,
+      "barrierNote": null
+    }}
+  ],
+  "warnings": [],
+  "completionMessage": "Stage completed! Continue to the next stage when ready."
+}}
+
+Respond ONLY with valid JSON adhering strictly to the schema above.

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACCESSOS Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="options-container">
+    <header class="options-header">
+      <div class="brand">
+        <span class="logo-mark">A</span>
+        <h1>ACCESSOS Settings</h1>
+      </div>
+      <p class="subtitle">Accessibility & Preference Configuration</p>
+    </header>
+
+    <main class="options-content">
+      <section class="section">
+        <h2>Assistant Preferences</h2>
+        <div class="option-row">
+          <label for="theme-select">Interface Theme</label>
+          <select id="theme-select">
+            <option value="system">System Default</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Backend Connection</h2>
+        <div class="option-row">
+          <label for="backend-url">Backend API URL</label>
+          <input type="text" id="backend-url" value="http://localhost:8000" readonly />
+        </div>
+      </section>
+    </main>
+
+    <footer class="options-footer">
+      <span id="save-status" class="save-status">Settings saved</span>
+    </footer>
+  </div>
+  <script type="module" src="options.ts"></script>
+</body>
+</html>

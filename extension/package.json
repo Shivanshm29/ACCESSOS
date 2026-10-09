@@ -1,0 +1,24 @@
+{
+  "name": "accessos-extension",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ACCESSOS Chrome/Edge browser extension foundation",
+  "type": "module",
+  "scripts": {
+    "build": "vite build && vite build --config vite.content.config.ts",
+    "package": "npm run build && node scripts/package-extension.js",
+    "demo:health": "node scripts/demo-health.js",
+    "demo:reset": "node scripts/reset-demo.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.308",
+    "@types/node": "^26.6.4",
+    "happy-dom": "^17.1.8",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.1",
+    "vitest": "^5.0.3"
+  }
+}

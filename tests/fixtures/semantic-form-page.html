@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Municipal Citizen Grant Application</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; line-height: 1.5; background: #f8fafc; }
+    main { max-width: 800px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 8px; }
+    .error-message { color: #dc2626; font-size: 13px; margin-top: 4px; }
+    .help-text { color: #64748b; font-size: 12px; }
+    .form-group { margin-bottom: 16px; }
+    .hidden-element { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="/images/city-seal.png" alt="Official City Seal" width="80" height="80" />
+    <img src="/images/decorative-header.png" width="400" height="20" />
+  </header>
+
+  <main role="main">
+    <h1>Municipal Citizen Grant Application</h1>
+    <p class="instruction-banner">Supporting documents must be uploaded in PDF format and under 5MB.</p>
+
+    <form id="grant-form">
+      <!-- Section 1: Applicant Identification -->
+      <section id="section-applicant">
+        <h2>Applicant Identification</h2>
+
+        <div class="form-group">
+          <label for="full-name">Full Legal Name</label>
+          <input type="text" id="full-name" name="fullName" required placeholder="Jane Doe" />
+        </div>
+
+        <div class="form-group">
+          <label>Email Address
+            <input type="email" id="email-address" name="email" required aria-invalid="true" aria-describedby="email-error" value="invalid-email@" />
+          </label>
+          <div role="alert" id="email-error" class="error-message">Please enter a valid official email address.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone-number">Contact Phone Number</label>
+          <input type="tel" id="phone-number" name="phone" placeholder="(555) 000-0000" />
+        </div>
+
+        <div class="form-group">
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob" name="birthDate" required />
+        </div>
+      </section>
+
+      <!-- Section 2: Household & Financial Details -->
+      <section id="section-household">
+        <h2>Household & Financial Details</h2>
+
+        <div class="form-group">
+          <label for="grant-category">Grant Category</label>
+          <select id="grant-category" name="category" required>
+            <option value="">Select category...</option>
+            <option value="housing">Housing Assistance</option>
+            <option value="education">Educational Support</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <span id="label-hh-size">Total Household Size</span>
+          <input type="number" id="household-size" name="householdSize" aria-labelledby="label-hh-size" required min="1" max="15" />
+        </div>
+
+        <div class="form-group">
+          <input type="text" id="annual-income" name="income" aria-label="Annual Household Income" placeholder="e.g. 45000" />
+        </div>
+
+        <div class="form-group">
+          <label for="hardship-statement">Statement of Need</label>
+          <textarea id="hardship-statement" name="statement" aria-describedby="hardship-hint" rows="4"></textarea>
+          <p class="help-text" id="hardship-hint">Please describe your current financial situation in under 500 words.</p>
+        </div>
+      </section>
+
+      <!-- Section 3: Supporting Documentation -->
+      <section id="section-documents">
+        <h2>Supporting Documentation</h2>
+
+        <div class="form-group">
+          <label for="income-proof">Income Verification Document</label>
+          <input type="file" id="income-proof" name="proofFile" required accept=".pdf" />
+        </div>
+
+        <div class="form-group">
+          <!-- Unlabeled input field for accessibility signal testing -->
+          <input type="text" id="unlabeled-notes" name="internalNotes" placeholder="Administrative review notes" />
+        </div>
+
+        <div class="form-group">
+          <label for="account-pin">Security PIN</label>
+          <input type="password" id="account-pin" name="pin" required value="secret123" />
+        </div>
+      </section>
+
+      <!-- Section 4: Declaration & Submission -->
+      <section id="section-submission">
+        <h3>Declaration & Submission</h3>
+
+        <div class="form-group">
+          <label for="consent-check">
+            <input type="checkbox" id="consent-check" name="consent" required />
+            I confirm the information is accurate
+          </label>
+        </div>
+
+        <div class="button-group">
+          <button type="submit" id="submit-btn">Submit Application</button>
+          <button type="button" id="draft-btn">Save Draft</button>
+          <!-- Empty button for accessibility signal testing -->
+          <button type="button" id="empty-btn"></button>
+        </div>
+      </form>
+
+      <nav aria-label="Related links">
+        <a href="/guidelines" id="guidelines-link">Program Guidelines</a>
+        <a href="https://external-aid.gov/faq" id="external-link">External FAQ</a>
+        <a href="#privacy" id="privacy-link" aria-label="Privacy Notice">Privacy</a>
+        <!-- Empty link for accessibility signal testing -->
+        <a href="/empty" id="empty-link"></a>
+      </nav>
+
+      <!-- Hidden heading to test visibility filtering -->
+      <h2 class="hidden-element">Hidden Internal Section</h2>
+    </section>
+  </main>
+</body>
+</html>
