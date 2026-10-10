@@ -12,6 +12,7 @@ import type {
   AnalyticsEventInput,
   AnalyticsSession,
 } from '../../analytics/types';
+import type { ProfileFieldMapping, ApplyProfileResult } from '../../profile/types';
 
 export enum MessageType {
   PING = 'PING',
@@ -36,6 +37,8 @@ export enum MessageType {
   RECORD_ANALYTICS_EVENT = 'RECORD_ANALYTICS_EVENT',
   RESET_DEMO = 'RESET_DEMO',
   DEMO_RESET_RESULT = 'DEMO_RESET_RESULT',
+  APPLY_PROFILE_FIELDS = 'APPLY_PROFILE_FIELDS',
+  PROFILE_APPLIED_RESULT = 'PROFILE_APPLIED_RESULT',
 }
 
 export interface HighlightElementPayload {
@@ -323,6 +326,32 @@ export function isRecordAnalyticsMessage(msg: unknown): msg is RecordAnalyticsMe
     (msg as RecordAnalyticsMessage).payload !== null
   );
 }
+
+export interface ApplyProfileFieldsPayload {
+  mappings: ProfileFieldMapping[];
+}
+
+export interface ApplyProfileFieldsMessage extends BaseMessage<ApplyProfileFieldsPayload> {
+  type: MessageType.APPLY_PROFILE_FIELDS;
+  payload: ApplyProfileFieldsPayload;
+}
+
+export interface ProfileAppliedResultMessage extends BaseMessage<ApplyProfileResult> {
+  type: MessageType.PROFILE_APPLIED_RESULT;
+  payload: ApplyProfileResult;
+}
+
+export function isApplyProfileFieldsMessage(msg: unknown): msg is ApplyProfileFieldsMessage {
+  return (
+    typeof msg === 'object' &&
+    msg !== null &&
+    (msg as BaseMessage).type === MessageType.APPLY_PROFILE_FIELDS &&
+    typeof (msg as ApplyProfileFieldsMessage).payload === 'object' &&
+    (msg as ApplyProfileFieldsMessage).payload !== null &&
+    Array.isArray((msg as ApplyProfileFieldsMessage).payload.mappings)
+  );
+}
+
 
 export function isKnownMessageType(type: string): boolean {
   return Object.values(MessageType).includes(type as MessageType);

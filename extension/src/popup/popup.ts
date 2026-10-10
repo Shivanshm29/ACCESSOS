@@ -57,6 +57,14 @@ import {
   type AnalyticsAggregates,
 } from '../analytics/index';
 import { demoResetManager } from '../demo/reset';
+import {
+  userProfileStorage,
+  DEFAULT_VERIFIED_PROFILE,
+  matchProfileToRepresentation,
+  mergeFactsIntoProfile,
+  type UserProfile,
+  type ProfileFieldMapping,
+} from '../profile/index';
 
 export function isRestrictedUrl(url?: string): boolean {
   if (!url) return true;
@@ -289,9 +297,54 @@ export class PopupController {
   private statCompBlockers: HTMLElement | null = null;
   private statSafeConfirmed: HTMLElement | null = null;
   private statSafeBlocked: HTMLElement | null = null;
-  private statSafeCancelled: HTMLElement | null = null;
   private prefAnalyticsEnabledCb: HTMLInputElement | null = null;
   private prefAnalyticsClearBtn: HTMLButtonElement | null = null;
+
+  // Phase 18 Citizen Profile Vault elements & state
+  private vaultBtn: HTMLButtonElement | null = null;
+  private vaultStatusIndicator: HTMLElement | null = null;
+  private vaultPanel: HTMLElement | null = null;
+  private vaultCloseBtn: HTMLButtonElement | null = null;
+  private vaultProfilePill: HTMLElement | null = null;
+  private vaultMatchCountBadge: HTMLElement | null = null;
+  private vaultMatchStatus: HTMLElement | null = null;
+  private vaultMatchListBox: HTMLElement | null = null;
+  private vaultMatchList: HTMLElement | null = null;
+  private vaultScanBtn: HTMLButtonElement | null = null;
+  private vaultFillBtn: HTMLButtonElement | null = null;
+  private vaultLoadTemplateBtn: HTMLButtonElement | null = null;
+  private vaultClearBtn: HTMLButtonElement | null = null;
+  private vaultSaveBtn: HTMLButtonElement | null = null;
+  private vaultToastMsg: HTMLElement | null = null;
+  private docSyncProfileBtn: HTMLButtonElement | null = null;
+  private docSyncToast: HTMLElement | null = null;
+
+  // Profile Form Inputs
+  private vpFullname: HTMLInputElement | null = null;
+  private vpDob: HTMLInputElement | null = null;
+  private vpGender: HTMLSelectElement | null = null;
+  private vpCategory: HTMLSelectElement | null = null;
+  private vpDomicile: HTMLInputElement | null = null;
+  private vpDomicileCert: HTMLInputElement | null = null;
+  private vpEmail: HTMLInputElement | null = null;
+  private vpPhone: HTMLInputElement | null = null;
+  private vpAddress1: HTMLInputElement | null = null;
+  private vpDistrict: HTMLInputElement | null = null;
+  private vpState: HTMLInputElement | null = null;
+  private vpPincode: HTMLInputElement | null = null;
+  private vpInstitution: HTMLInputElement | null = null;
+  private vpCourse: HTMLInputElement | null = null;
+  private vpRoll: HTMLInputElement | null = null;
+  private vpYear: HTMLInputElement | null = null;
+  private vpPercentage: HTMLInputElement | null = null;
+  private vpBankHolder: HTMLInputElement | null = null;
+  private vpBankName: HTMLInputElement | null = null;
+  private vpBankAcc: HTMLInputElement | null = null;
+  private vpBankIfsc: HTMLInputElement | null = null;
+  private vpFamilyIncome: HTMLInputElement | null = null;
+
+  private currentProfile: UserProfile = { ...DEFAULT_VERIFIED_PROFILE };
+  private currentProfileMatches: ProfileFieldMapping[] = [];
 
   private currentExplainSelection: SelectionContextPayload | null = null;
   private currentExplainMode: ExplanationMode = 'SIMPLE';
@@ -514,7 +567,50 @@ export class PopupController {
     this.prefAnalyticsEnabledCb = document.getElementById('pref-analytics-enabled-cb') as HTMLInputElement | null;
     this.prefAnalyticsClearBtn = document.getElementById('pref-analytics-clear-btn') as HTMLButtonElement | null;
 
+    // Phase 18 Citizen Profile Vault elements
+    this.vaultBtn = document.getElementById('vault-btn') as HTMLButtonElement | null;
+    this.vaultStatusIndicator = document.getElementById('vault-status-indicator');
+    this.vaultPanel = document.getElementById('vault-panel');
+    this.vaultCloseBtn = document.getElementById('vault-close-btn') as HTMLButtonElement | null;
+    this.vaultProfilePill = document.getElementById('vault-profile-pill');
+    this.vaultMatchCountBadge = document.getElementById('vault-match-count-badge');
+    this.vaultMatchStatus = document.getElementById('vault-match-status');
+    this.vaultMatchListBox = document.getElementById('vault-match-list-box');
+    this.vaultMatchList = document.getElementById('vault-match-list');
+    this.vaultScanBtn = document.getElementById('vault-scan-btn') as HTMLButtonElement | null;
+    this.vaultFillBtn = document.getElementById('vault-fill-btn') as HTMLButtonElement | null;
+    this.vaultLoadTemplateBtn = document.getElementById('vault-load-template-btn') as HTMLButtonElement | null;
+    this.vaultClearBtn = document.getElementById('vault-clear-btn') as HTMLButtonElement | null;
+    this.vaultSaveBtn = document.getElementById('vault-save-btn') as HTMLButtonElement | null;
+    this.vaultToastMsg = document.getElementById('vault-toast-msg');
+    this.docSyncProfileBtn = document.getElementById('doc-sync-profile-btn') as HTMLButtonElement | null;
+    this.docSyncToast = document.getElementById('doc-sync-toast');
+
+    this.vpFullname = document.getElementById('vp-fullname') as HTMLInputElement | null;
+    this.vpDob = document.getElementById('vp-dob') as HTMLInputElement | null;
+    this.vpGender = document.getElementById('vp-gender') as HTMLSelectElement | null;
+    this.vpCategory = document.getElementById('vp-category') as HTMLSelectElement | null;
+    this.vpDomicile = document.getElementById('vp-domicile') as HTMLInputElement | null;
+    this.vpDomicileCert = document.getElementById('vp-domicile-cert') as HTMLInputElement | null;
+    this.vpEmail = document.getElementById('vp-email') as HTMLInputElement | null;
+    this.vpPhone = document.getElementById('vp-phone') as HTMLInputElement | null;
+    this.vpAddress1 = document.getElementById('vp-address1') as HTMLInputElement | null;
+    this.vpDistrict = document.getElementById('vp-district') as HTMLInputElement | null;
+    this.vpState = document.getElementById('vp-state') as HTMLInputElement | null;
+    this.vpPincode = document.getElementById('vp-pincode') as HTMLInputElement | null;
+    this.vpInstitution = document.getElementById('vp-institution') as HTMLInputElement | null;
+    this.vpCourse = document.getElementById('vp-course') as HTMLInputElement | null;
+    this.vpRoll = document.getElementById('vp-roll') as HTMLInputElement | null;
+    this.vpYear = document.getElementById('vp-year') as HTMLInputElement | null;
+    this.vpPercentage = document.getElementById('vp-percentage') as HTMLInputElement | null;
+    this.vpBankHolder = document.getElementById('vp-bank-holder') as HTMLInputElement | null;
+    this.vpBankName = document.getElementById('vp-bank-name') as HTMLInputElement | null;
+    this.vpBankAcc = document.getElementById('vp-bank-acc') as HTMLInputElement | null;
+    this.vpBankIfsc = document.getElementById('vp-bank-ifsc') as HTMLInputElement | null;
+    this.vpFamilyIncome = document.getElementById('vp-family-income') as HTMLInputElement | null;
+
     void this.loadAndApplyPreferences();
+    void this.loadProfileToUI();
 
     this.attachEventListeners();
     this.setState('IDLE');
@@ -679,9 +775,44 @@ export class PopupController {
       void this.handleClearAnalytics();
     });
 
+    // Phase 18 Citizen Profile Vault event listeners
+    this.vaultBtn?.addEventListener('click', () => {
+      void this.handleToggleVaultPanel();
+    });
+
+    this.vaultCloseBtn?.addEventListener('click', () => {
+      this.handleCloseVaultPanel();
+    });
+
+    this.vaultScanBtn?.addEventListener('click', () => {
+      void this.handleScanForm();
+    });
+
+    this.vaultFillBtn?.addEventListener('click', () => {
+      void this.handleFillForm();
+    });
+
+    this.vaultLoadTemplateBtn?.addEventListener('click', () => {
+      void this.handleLoadProfileTemplate();
+    });
+
+    this.vaultClearBtn?.addEventListener('click', () => {
+      void this.handleClearProfile();
+    });
+
+    this.vaultSaveBtn?.addEventListener('click', () => {
+      void this.handleSaveProfile();
+    });
+
+    this.docSyncProfileBtn?.addEventListener('click', () => {
+      void this.handleSyncDocFactsToVault();
+    });
+
     document.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (this.analyticsPanel && !this.analyticsPanel.classList.contains('hidden')) {
+        if (this.vaultPanel && !this.vaultPanel.classList.contains('hidden')) {
+          this.handleCloseVaultPanel();
+        } else if (this.analyticsPanel && !this.analyticsPanel.classList.contains('hidden')) {
           this.handleCloseAnalyticsPanel();
         } else if (this.completionPanel && !this.completionPanel.classList.contains('hidden')) {
           this.handleCloseCompletionPanel();
@@ -801,6 +932,7 @@ export class PopupController {
       this.completionPanel?.classList.add('hidden');
       this.preferencesPanel?.classList.add('hidden');
       this.analyticsPanel?.classList.add('hidden');
+      this.vaultPanel?.classList.add('hidden');
 
       this.setState('IDLE');
       if (this.statusMessage) {
@@ -2196,6 +2328,10 @@ export class PopupController {
         }
       }
     }
+
+    if (res.extractedFacts && res.extractedFacts.length > 0) {
+      this.docSyncProfileBtn?.classList.remove('hidden');
+    }
   }
 
   public showDocError(message: string): void {
@@ -2770,6 +2906,293 @@ export class PopupController {
 
   public isAnalyticsPanelActive(): boolean {
     return this.analyticsPanel ? !this.analyticsPanel.classList.contains('hidden') : false;
+  }
+
+  // ==========================================================================
+  // Phase 18 Citizen Profile Vault Operations
+  // ==========================================================================
+
+  public async handleToggleVaultPanel(): Promise<void> {
+    if (!this.vaultPanel) return;
+    const isHidden = this.vaultPanel.classList.contains('hidden');
+    if (isHidden) {
+      // Close other panels
+      this.docPanel?.classList.add('hidden');
+      this.guidedPanel?.classList.add('hidden');
+      this.explainPanel?.classList.add('hidden');
+      this.preferencesPanel?.classList.add('hidden');
+      this.completionPanel?.classList.add('hidden');
+      this.analyticsPanel?.classList.add('hidden');
+
+      this.vaultPanel.classList.remove('hidden');
+      this.vaultPanel.focus();
+      await this.loadProfileToUI();
+      await this.handleScanForm();
+    } else {
+      this.vaultPanel.classList.add('hidden');
+    }
+  }
+
+  public handleCloseVaultPanel(): void {
+    this.vaultPanel?.classList.add('hidden');
+    this.vaultBtn?.focus();
+  }
+
+  public isVaultPanelActive(): boolean {
+    return this.vaultPanel ? !this.vaultPanel.classList.contains('hidden') : false;
+  }
+
+  public async loadProfileToUI(): Promise<void> {
+    try {
+      this.currentProfile = await userProfileStorage.load();
+      this.populateInputsFromProfile(this.currentProfile);
+    } catch {
+      // Fallback
+    }
+  }
+
+  public populateInputsFromProfile(profile: UserProfile): void {
+    if (this.vpFullname) this.vpFullname.value = profile.personal?.fullName || '';
+    if (this.vpDob) this.vpDob.value = profile.personal?.dob || '';
+    if (this.vpGender) this.vpGender.value = profile.personal?.gender || '';
+    if (this.vpCategory) this.vpCategory.value = profile.personal?.category || '';
+    if (this.vpDomicile) this.vpDomicile.value = profile.personal?.domicileState || '';
+    if (this.vpDomicileCert) this.vpDomicileCert.value = profile.personal?.domicileCertNo || '';
+    if (this.vpEmail) this.vpEmail.value = profile.contact?.email || '';
+    if (this.vpPhone) this.vpPhone.value = profile.contact?.phone || '';
+    if (this.vpAddress1) this.vpAddress1.value = profile.contact?.addressLine1 || '';
+    if (this.vpDistrict) this.vpDistrict.value = profile.contact?.district || '';
+    if (this.vpState) this.vpState.value = profile.contact?.state || '';
+    if (this.vpPincode) this.vpPincode.value = profile.contact?.pincode || '';
+    if (this.vpInstitution) this.vpInstitution.value = profile.academic?.institutionName || '';
+    if (this.vpCourse) this.vpCourse.value = profile.academic?.courseName || '';
+    if (this.vpRoll) this.vpRoll.value = profile.academic?.rollNumber || '';
+    if (this.vpYear) this.vpYear.value = profile.academic?.currentYear || '';
+    if (this.vpPercentage) this.vpPercentage.value = profile.academic?.percentageMarks || '';
+    if (this.vpBankHolder) this.vpBankHolder.value = profile.banking?.accountHolderName || '';
+    if (this.vpBankName) this.vpBankName.value = profile.banking?.bankName || '';
+    if (this.vpBankAcc) this.vpBankAcc.value = profile.banking?.accountNumber || '';
+    if (this.vpBankIfsc) this.vpBankIfsc.value = profile.banking?.ifscCode || '';
+    if (this.vpFamilyIncome) this.vpFamilyIncome.value = profile.banking?.annualFamilyIncome || '';
+
+    if (this.vaultProfilePill) {
+      this.vaultProfilePill.textContent = profile.personal?.fullName || 'Empty Profile';
+    }
+  }
+
+  public gatherProfileFromInputs(): UserProfile {
+    return {
+      ...this.currentProfile,
+      lastUpdated: Date.now(),
+      personal: {
+        fullName: this.vpFullname?.value.trim() || '',
+        dob: this.vpDob?.value.trim() || '',
+        gender: this.vpGender?.value || '',
+        category: this.vpCategory?.value || '',
+        domicileState: this.vpDomicile?.value.trim() || '',
+        domicileCertNo: this.vpDomicileCert?.value.trim() || '',
+        differentlyAbled: this.currentProfile.personal?.differentlyAbled || 'no',
+      },
+      contact: {
+        email: this.vpEmail?.value.trim() || '',
+        phone: this.vpPhone?.value.trim() || '',
+        altPhone: this.currentProfile.contact?.altPhone || '',
+        addressLine1: this.vpAddress1?.value.trim() || '',
+        addressLine2: this.currentProfile.contact?.addressLine2 || '',
+        district: this.vpDistrict?.value.trim() || '',
+        state: this.vpState?.value.trim() || '',
+        pincode: this.vpPincode?.value.trim() || '',
+      },
+      academic: {
+        institutionName: this.vpInstitution?.value.trim() || '',
+        courseName: this.vpCourse?.value.trim() || '',
+        rollNumber: this.vpRoll?.value.trim() || '',
+        currentYear: this.vpYear?.value.trim() || '',
+        previousExam: this.currentProfile.academic?.previousExam || '',
+        percentageMarks: this.vpPercentage?.value.trim() || '',
+        cgpa: this.currentProfile.academic?.cgpa || '',
+      },
+      banking: {
+        accountHolderName: this.vpBankHolder?.value.trim() || '',
+        bankName: this.vpBankName?.value.trim() || '',
+        accountNumber: this.vpBankAcc?.value.trim() || '',
+        ifscCode: this.vpBankIfsc?.value.trim() || '',
+        annualFamilyIncome: this.vpFamilyIncome?.value.trim() || '',
+        parentName: this.currentProfile.banking?.parentName || '',
+        parentOccupation: this.currentProfile.banking?.parentOccupation || '',
+      },
+    };
+  }
+
+  public async handleSaveProfile(): Promise<void> {
+    const updated = this.gatherProfileFromInputs();
+    await userProfileStorage.save(updated);
+    this.currentProfile = updated;
+    if (this.vaultProfilePill) {
+      this.vaultProfilePill.textContent = updated.personal.fullName || 'Empty Profile';
+    }
+
+    if (this.vaultToastMsg) {
+      this.vaultToastMsg.textContent = '✓ Saved to Vault';
+      this.vaultToastMsg.classList.remove('hidden');
+      setTimeout(() => {
+        this.vaultToastMsg?.classList.add('hidden');
+      }, 2500);
+    }
+
+    await this.handleScanForm();
+  }
+
+  public async handleLoadProfileTemplate(): Promise<void> {
+    this.currentProfile = await userProfileStorage.resetToDefault();
+    this.populateInputsFromProfile(this.currentProfile);
+    if (this.vaultToastMsg) {
+      this.vaultToastMsg.textContent = '✓ Template Loaded';
+      this.vaultToastMsg.classList.remove('hidden');
+      setTimeout(() => {
+        this.vaultToastMsg?.classList.add('hidden');
+      }, 2000);
+    }
+    await this.handleScanForm();
+  }
+
+  public async handleClearProfile(): Promise<void> {
+    this.currentProfile = await userProfileStorage.clear();
+    this.populateInputsFromProfile(this.currentProfile);
+    this.renderMatchResults([]);
+  }
+
+  public async handleScanForm(): Promise<void> {
+    this.vaultStatusIndicator?.classList.remove('hidden');
+
+    try {
+      // If we don't have representation yet, request it from active tab
+      if (!this.lastRepresentation && this.activeTabId && chrome.tabs?.sendMessage) {
+        await new Promise<void>((resolve) => {
+          chrome.tabs.sendMessage(
+            this.activeTabId!,
+            createMessage(MessageType.ANALYZE_PAGE, {}),
+            (res) => {
+              if (res && res.payload?.representation) {
+                this.lastRepresentation = res.payload.representation;
+              }
+              resolve();
+            }
+          );
+        });
+      }
+
+      if (this.lastRepresentation) {
+        const result = matchProfileToRepresentation(this.lastRepresentation, this.currentProfile);
+        this.currentProfileMatches = result.matches;
+        this.renderMatchResults(result.matches);
+      } else {
+        this.renderMatchResults([]);
+      }
+    } catch {
+      this.renderMatchResults([]);
+    } finally {
+      this.vaultStatusIndicator?.classList.add('hidden');
+    }
+  }
+
+  public renderMatchResults(matches: ProfileFieldMapping[]): void {
+    if (this.vaultMatchCountBadge) {
+      this.vaultMatchCountBadge.textContent = `${matches.length} Mapped`;
+    }
+    if (this.vaultFillBtn) {
+      this.vaultFillBtn.disabled = matches.length === 0;
+    }
+
+    if (matches.length > 0) {
+      if (this.vaultMatchStatus) {
+        this.vaultMatchStatus.textContent = `Found ${matches.length} fields on this page that correlate with your verified profile. Ready to assistively fill.`;
+      }
+      if (this.vaultMatchListBox) {
+        this.vaultMatchListBox.classList.remove('hidden');
+      }
+      if (this.vaultMatchList) {
+        this.vaultMatchList.innerHTML = '';
+        for (const m of matches) {
+          const li = document.createElement('li');
+          li.className = 'vault-match-item';
+          li.innerHTML = `
+            <span class="vault-match-key">${m.formFieldLabel}</span>
+            <span class="vault-match-val" title="${m.profileValue}">${m.profileValue}</span>
+          `;
+          this.vaultMatchList.appendChild(li);
+        }
+      }
+    } else {
+      if (this.vaultMatchStatus) {
+        this.vaultMatchStatus.textContent = 'No matching form fields detected on active page or profile has no entries.';
+      }
+      this.vaultMatchListBox?.classList.add('hidden');
+    }
+  }
+
+  public async handleFillForm(): Promise<void> {
+    if (this.currentProfileMatches.length === 0 || !this.activeTabId || !chrome.tabs?.sendMessage) {
+      return;
+    }
+
+    if (this.vaultFillBtn) {
+      this.vaultFillBtn.disabled = true;
+      this.vaultFillBtn.textContent = 'Applying...';
+    }
+
+    try {
+      await new Promise<void>((resolve) => {
+        chrome.tabs.sendMessage(
+          this.activeTabId!,
+          createMessage(MessageType.APPLY_PROFILE_FIELDS, { mappings: this.currentProfileMatches }),
+          (res) => {
+            const count = res?.payload?.appliedCount || this.currentProfileMatches.length;
+            if (this.vaultMatchStatus) {
+              this.vaultMatchStatus.textContent = `✓ Successfully populated ${count} fields in the form! Please review before submitting.`;
+            }
+            if (this.vaultFillBtn) {
+              this.vaultFillBtn.textContent = '✓ Populated!';
+              setTimeout(() => {
+                if (this.vaultFillBtn) {
+                  this.vaultFillBtn.textContent = '⚡ Fill Matched Fields';
+                  this.vaultFillBtn.disabled = false;
+                }
+              }, 2500);
+            }
+            resolve();
+          }
+        );
+      });
+    } catch {
+      if (this.vaultFillBtn) {
+        this.vaultFillBtn.textContent = '⚡ Fill Matched Fields';
+        this.vaultFillBtn.disabled = false;
+      }
+    }
+  }
+
+  public async handleSyncDocFactsToVault(): Promise<void> {
+    if (!this.currentDocumentResponse?.extractedFacts || this.currentDocumentResponse.extractedFacts.length === 0) {
+      return;
+    }
+
+    const { updatedProfile, updatedFields } = mergeFactsIntoProfile(
+      this.currentProfile,
+      this.currentDocumentResponse.extractedFacts
+    );
+
+    await userProfileStorage.save(updatedProfile);
+    this.currentProfile = updatedProfile;
+    this.populateInputsFromProfile(updatedProfile);
+
+    if (this.docSyncToast) {
+      this.docSyncToast.textContent = `✓ Saved ${updatedFields.length} facts to Profile Vault!`;
+      this.docSyncToast.classList.remove('hidden');
+      setTimeout(() => {
+        this.docSyncToast?.classList.add('hidden');
+      }, 3000);
+    }
   }
 }
 

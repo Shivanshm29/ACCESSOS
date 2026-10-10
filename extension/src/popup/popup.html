@@ -126,6 +126,14 @@
             <span id="doc-status-indicator" class="doc-status-indicator hidden" aria-live="polite">Analyzing document...</span>
           </div>
 
+          <!-- Phase 18 Citizen Profile Vault Trigger Button -->
+          <div class="vault-trigger-container">
+            <button type="button" id="vault-btn" class="vault-trigger-button" aria-label="Open Citizen Profile Vault">
+              🗄️ <span data-i18n="tab_vault">Profile Vault</span>
+            </button>
+            <span id="vault-status-indicator" class="vault-status-indicator hidden" aria-live="polite">Matching fields...</span>
+          </div>
+
           <!-- Phase 10 User Preferences Trigger Button -->
           <div class="pref-trigger-container">
             <button type="button" id="preferences-btn" class="pref-trigger-button" aria-label="Open User Preferences">
@@ -405,11 +413,218 @@
                   <!-- Dynamically populated requirement matches -->
                 </div>
               </div>
+
+              <!-- Sync facts to Profile Vault action -->
+              <div class="doc-profile-sync-container">
+                <button type="button" id="doc-sync-profile-btn" class="doc-sync-profile-btn">
+                  📥 Save Extracted Facts to Profile Vault
+                </button>
+                <span id="doc-sync-toast" class="doc-sync-toast hidden" role="status">✓ Facts saved to Vault</span>
+              </div>
             </div>
 
             <!-- Document Error / Warning Notice -->
             <div id="doc-error-banner" class="ai-error-banner hidden" role="alert">
               <span id="doc-error-text">Document processing error.</span>
+            </div>
+          </section>
+
+          <!-- Phase 18 Citizen Profile Vault Panel -->
+          <section id="vault-panel" class="vault-panel hidden" role="region" aria-label="Citizen Profile Vault" tabindex="-1">
+            <div class="vault-panel-header">
+              <div class="vault-badge-row">
+                <span class="vault-badge">CITIZEN PROFILE VAULT</span>
+                <span id="vault-profile-pill" class="vault-profile-pill">Aarav Sharma</span>
+              </div>
+              <button type="button" id="vault-close-btn" class="vault-close-btn" aria-label="Close Profile Vault">✕</button>
+            </div>
+
+            <!-- Form Auto-Fill Card -->
+            <div class="vault-smart-card">
+              <div class="vault-smart-header">
+                <div class="vault-smart-title">Form Match &amp; Assisted Fill</div>
+                <span id="vault-match-count-badge" class="vault-count-badge">0 Mapped</span>
+              </div>
+              <p id="vault-match-status" class="vault-match-status">
+                Correlate your verified profile data against input fields on the active page.
+              </p>
+              
+              <div id="vault-match-list-box" class="vault-match-list-box hidden">
+                <div class="vault-match-list-header">Detected Field Correlations:</div>
+                <ul id="vault-match-list" class="vault-match-list">
+                  <!-- Dynamically populated match items -->
+                </ul>
+              </div>
+
+              <div class="vault-actions-row">
+                <button type="button" id="vault-scan-btn" class="vault-action-btn secondary">
+                  🔍 Scan Active Form
+                </button>
+                <button type="button" id="vault-fill-btn" class="vault-action-btn primary" disabled>
+                  ⚡ Fill Matched Fields
+                </button>
+              </div>
+
+              <div class="vault-safety-callout">
+                <span class="vault-safety-icon">🛡️</span>
+                <span class="vault-safety-text">
+                  Human-in-the-loop: Populates values into inputs for your review. Never auto-submits or touches password fields.
+                </span>
+              </div>
+            </div>
+
+            <!-- Profile Controls & Template Bar -->
+            <div class="vault-toolbar">
+              <span class="vault-toolbar-label">Manage Profile Data:</span>
+              <div class="vault-toolbar-btns">
+                <button type="button" id="vault-load-template-btn" class="vault-tool-btn" title="Load sample verified student profile">
+                  ⚡ Load Template
+                </button>
+                <button type="button" id="vault-clear-btn" class="vault-tool-btn danger" title="Clear all stored profile fields">
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <!-- Editable Profile Fields Form -->
+            <div class="vault-editor-card">
+              <div class="vault-editor-title">Stored Profile Records</div>
+
+              <!-- Personal Particulars -->
+              <div class="vault-section-group">
+                <div class="vault-group-title">Personal Particulars</div>
+                <div class="vault-input-grid">
+                  <div class="vault-field">
+                    <label for="vp-fullname">Full Legal Name</label>
+                    <input type="text" id="vp-fullname" class="vault-input" placeholder="e.g. Aarav Sharma" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-dob">Date of Birth</label>
+                    <input type="date" id="vp-dob" class="vault-input" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-gender">Gender</label>
+                    <select id="vp-gender" class="vault-select">
+                      <option value="">Select...</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="transgender">Transgender</option>
+                      <option value="prefer_not_to_say">Prefer Not To Disclose</option>
+                    </select>
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-category">Social Category</label>
+                    <select id="vp-category" class="vault-select">
+                      <option value="">Select...</option>
+                      <option value="General">General</option>
+                      <option value="OBC">OBC</option>
+                      <option value="SC">SC</option>
+                      <option value="ST">ST</option>
+                      <option value="EWS">EWS</option>
+                    </select>
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-domicile">Domicile State</label>
+                    <input type="text" id="vp-domicile" class="vault-input" placeholder="e.g. Maharashtra" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-domicile-cert">Certificate No.</label>
+                    <input type="text" id="vp-domicile-cert" class="vault-input" placeholder="e.g. MH-DOM-2024-884102" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Particulars -->
+              <div class="vault-section-group">
+                <div class="vault-group-title">Contact &amp; Address</div>
+                <div class="vault-input-grid">
+                  <div class="vault-field">
+                    <label for="vp-email">Email Address</label>
+                    <input type="email" id="vp-email" class="vault-input" placeholder="candidate@example.com" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-phone">Mobile Number</label>
+                    <input type="tel" id="vp-phone" class="vault-input" placeholder="9876543210" />
+                  </div>
+                  <div class="vault-field span-2">
+                    <label for="vp-address1">Street Address</label>
+                    <input type="text" id="vp-address1" class="vault-input" placeholder="Flat / House / Street" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-district">District</label>
+                    <input type="text" id="vp-district" class="vault-input" placeholder="e.g. Pune" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-state">State</label>
+                    <input type="text" id="vp-state" class="vault-input" placeholder="e.g. Maharashtra" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-pincode">PIN Code</label>
+                    <input type="text" id="vp-pincode" class="vault-input" placeholder="e.g. 411001" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Academic Enrollment -->
+              <div class="vault-section-group">
+                <div class="vault-group-title">Academic Enrollment</div>
+                <div class="vault-input-grid">
+                  <div class="vault-field span-2">
+                    <label for="vp-institution">Institution / College Name</label>
+                    <input type="text" id="vp-institution" class="vault-input" placeholder="Institute name" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-course">Course / Degree</label>
+                    <input type="text" id="vp-course" class="vault-input" placeholder="e.g. B.Tech Computer Science" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-roll">Roll / Registration No.</label>
+                    <input type="text" id="vp-roll" class="vault-input" placeholder="e.g. CS-2022-049" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-year">Current Year</label>
+                    <input type="text" id="vp-year" class="vault-input" placeholder="e.g. 3" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-percentage">Percentage Marks</label>
+                    <input type="text" id="vp-percentage" class="vault-input" placeholder="e.g. 88.5" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Banking & DBT -->
+              <div class="vault-section-group">
+                <div class="vault-group-title">Banking &amp; Direct Benefit Transfer</div>
+                <div class="vault-input-grid">
+                  <div class="vault-field">
+                    <label for="vp-bank-holder">Account Holder Name</label>
+                    <input type="text" id="vp-bank-holder" class="vault-input" placeholder="As per passbook" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-bank-name">Bank Name</label>
+                    <input type="text" id="vp-bank-name" class="vault-input" placeholder="e.g. State Bank of India" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-bank-acc">Account Number</label>
+                    <input type="text" id="vp-bank-acc" class="vault-input" placeholder="Account number" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-bank-ifsc">IFSC Code</label>
+                    <input type="text" id="vp-bank-ifsc" class="vault-input" placeholder="e.g. SBIN0001234" />
+                  </div>
+                  <div class="vault-field">
+                    <label for="vp-family-income">Annual Family Income</label>
+                    <input type="text" id="vp-family-income" class="vault-input" placeholder="e.g. 180000" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="vault-save-row">
+                <button type="button" id="vault-save-btn" class="vault-save-button">
+                  Save Changes to Profile Vault
+                </button>
+                <span id="vault-toast-msg" class="vault-toast-msg hidden" role="status">✓ Saved</span>
+              </div>
             </div>
           </section>
 

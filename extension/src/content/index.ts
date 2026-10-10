@@ -11,6 +11,7 @@ import {
   isGetSelectionMessage,
   isExecuteInteractionMessage,
   isCheckCompletionMessage,
+  isApplyProfileFieldsMessage,
   validateMessageEnvelope,
   type PageAnalysisResponsePayload,
   type SelectionResponsePayload,
@@ -23,6 +24,7 @@ import { captureSelectionContext } from '../explain/selection';
 import { InPageExplainPopover, TRIGGER_BTN_ID, POPOVER_CONTAINER_ID } from './explain-popover';
 import { executeInteraction } from '../interaction/executor';
 import { evaluateCompletion } from '../completion/checker';
+import { applyProfileFields } from '../profile/applicator';
 
 function initializeContentScript(): void {
   console.log('[ACCESSOS] Content script attached to:', window.location.href);
@@ -175,6 +177,26 @@ function initializeContentScript(): void {
           })
         );
       }
+      return false;
+    }
+
+    if (isApplyProfileFieldsMessage(message)) {
+      try {
+        const result = applyProfileFields(document, message.payload.mappings);
+        sendResponse(createMessage(MessageType.PROFILE_APPLIED_RESULT, result));
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        sendResponse(
+          createMessage(MessageType.PROFILE_APPLIED_RESULT, {
+            success: false,
+            appliedCount: 0,
+            modifiedFields: [],
+            errors: [errorMessage || 'Failed to apply profile fields'],
+            timestamp: Date.now(),
+          })
+        );
+      }
+      return false;
     }
 
     if (message && message.type === MessageType.RESET_DEMO) {

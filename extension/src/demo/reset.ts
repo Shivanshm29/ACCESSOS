@@ -16,6 +16,7 @@ export interface DemoResetOptions {
   resetAnalytics?: boolean;
   resetDocuments?: boolean;
   clearAnalysisCache?: boolean;
+  resetProfile?: boolean;
 }
 
 export interface DemoResetResult {
@@ -33,6 +34,7 @@ export class DemoResetManager {
     'accessos_last_analysis',
     'accessos_guided_state',
     'accessos_completion_cache',
+    'accessos_user_profile',
   ];
 
   /**
@@ -44,6 +46,7 @@ export class DemoResetManager {
       resetAnalytics = true,
       resetDocuments = true,
       clearAnalysisCache = true,
+      resetProfile = true,
     } = options;
 
     const clearedItems: string[] = [];
@@ -54,6 +57,7 @@ export class DemoResetManager {
         const keysToRemove: string[] = [];
         if (resetAnalytics) keysToRemove.push('accessos_analytics');
         if (resetDocuments) keysToRemove.push('accessos_documents');
+        if (resetProfile) keysToRemove.push('accessos_user_profile');
         if (clearAnalysisCache) {
           keysToRemove.push('accessos_last_analysis', 'accessos_guided_state', 'accessos_completion_cache');
         }
