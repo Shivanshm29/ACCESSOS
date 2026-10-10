@@ -1,5 +1,5 @@
 """Provider registry and factory."""
-from typing import Dict, Type
+from typing import Dict, Optional, Type
 from app.ai.providers.base import (
     AIProvider,
     AIProviderError,

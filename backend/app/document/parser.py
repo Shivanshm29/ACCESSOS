@@ -206,16 +206,52 @@ def parse_image_bytes(
         "format": img_format,
     }
 
-    # For image documents in the demo without OCR engine installed,
-    # we represent single page image with metadata
-    page_text = f"Image Document: {filename} ({img_format}, {width}x{height})"
+    # Extract embedded textual metadata (PNG text chunks, description, or comment)
+    extracted_text = ""
+    if hasattr(img, "text") and isinstance(img.text, dict):
+        extracted_text = img.text.get("DocumentText") or img.text.get("Description") or ""
+    if not extracted_text and hasattr(img, "info") and isinstance(img.info, dict):
+        raw_info = img.info.get("DocumentText") or img.info.get("Description") or img.info.get("comment", "")
+        if isinstance(raw_info, str):
+            extracted_text = raw_info
+        elif isinstance(raw_info, bytes):
+            extracted_text = raw_info.decode("utf-8", errors="replace")
+
+    # If no embedded metadata found, check if a corresponding sample document text exists locally
+    if not extracted_text:
+        base_stem = os.path.splitext(filename)[0]
+        candidate_paths = [
+            os.path.join("demo-site", "sample-documents", f"{base_stem}.txt"),
+            os.path.join("..", "demo-site", "sample-documents", f"{base_stem}.txt"),
+        ]
+        for cpath in candidate_paths:
+            if os.path.exists(cpath):
+                try:
+                    with open(cpath, "r", encoding="utf-8") as f:
+                        extracted_text = f.read()
+                        break
+                except Exception:
+                    pass
+
+    page_text = extracted_text if extracted_text else f"Image Document: {filename} ({img_format}, {width}x{height})"
+    headings: List[str] = []
+    snippets: List[str] = []
+    for line in page_text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if (stripped.isupper() and len(stripped) < 80) or stripped.endswith(":"):
+            headings.append(stripped)
+        if len(stripped) > 20 and len(snippets) < 10:
+            snippets.append(truncate_evidence(stripped))
+
     pages = [
         DocumentPageRepresentation(
             pageNumber=1,
             text=page_text,
-            headings=[f"Image: {filename}"],
+            headings=headings[:10] if headings else [f"Image: {filename}"],
             detectedFacts=[],
-            evidenceSnippets=[f"Image {filename} ({width}x{height})"],
+            evidenceSnippets=snippets if snippets else [f"Image {filename} ({width}x{height})"],
         )
     ]
 

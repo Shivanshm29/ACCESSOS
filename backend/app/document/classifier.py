@@ -20,10 +20,10 @@ _PATTERNS: List[Tuple[DocumentType, List[Tuple[str, float]]]] = [
     (
         DocumentType.INCOME_CERTIFICATE,
         [
-            (r"(?i)income\s+certificate", 0.5),
-            (r"(?i)annual\s+(?:family\s+)?income", 0.3),
+            (r"(?i)(?:income\s+certificate|certificate\s+of\s+(?:annual\s+)?(?:household\s+|family\s+)?income)", 0.5),
+            (r"(?i)annual\s+(?:family\s+|household\s+)?income", 0.3),
             (r"(?i)(?:tahsildar|revenue\s+officer|taluk\s+office)", 0.2),
-            (r"(?i)gross\s+annual\s+income", 0.2),
+            (r"(?i)(?:gross\s+annual\s+income|annual\s+household\s+income)", 0.2),
             (r"(?i)financial\s+year\s+20\d\d", 0.1),
         ],
     ),

@@ -1,0 +1,192 @@
+================================================================================
+ACCESSOS COMPREHENSIVE DEMO VIDEO — 5-MINUTE MASTER SCRIPT & DIRECTOR CUES
+Target Duration: 4 minutes 45 seconds – 5 minutes 00 seconds
+Pacing: Calm, professional, authoritative (~135 words per minute + UI action pauses)
+Total Spoken Word Count: ~675 words
+Live Demo Portal URL: http://localhost:3000/
+================================================================================
+
+[0:00 – 0:45] ACT 1: THE URGENT PROBLEM & BEYOND BLIND AI
+--------------------------------------------------------------------------------
+SCREEN ACTION:
+- Open http://localhost:3000/ (National Student Scholarship Portal) in full screen.
+- Scroll through Step 1, then click Step 2, Step 5, and Step 6 on the step progress
+  bar to show the 8 complex multi-step stages and dozens of required inputs.
+- Scroll back to the top and highlight the statutory amber warning banner:
+  "Pursuant to Ministerial Order No. 492/SCH/2025... summary rejection."
+
+SPOKEN VOICEOVER:
+"Every year, millions of deserving students and citizens lose out on higher education
+scholarships, grants, and public welfare. Not because they are ineligible, but because
+government portals are intimidating, inaccessible, and unforgiving.
+
+A single misunderstanding of dense legal jargon or an unverified bank credential leads
+to summary rejection without warning. In response, modern AI agents attempt to automate
+forms through blind autocomplete. But on statutory portals, blind automation is dangerous:
+it hallucinates, leaks sensitive personal data to cloud servers, and risks legal non-compliance.
+
+We built ACCESSOS: an AI Accessibility Operating System embedded directly into the
+browser. ACCESSOS serves as a privacy-first, human-in-the-loop co-pilot that turns hostile
+digital public infrastructure into an accessible, dignified experience for everyone."
+
+
+[0:45 – 1:30] ACT 2: INSTANT ACCESSIBILITY & STRUCTURAL AUDIT
+--------------------------------------------------------------------------------
+SCREEN ACTION:
+- Click the ACCESSOS extension icon in the browser toolbar to open the popup.
+- Click the primary blue button: "Run Full Analysis".
+- Point to the Accessibility Score: "55/100 • Significant barriers".
+- Click "[ View Accessibility Findings ]" and scroll through the cards showing
+  WCAG violations (missing alt text on official crest, unlabelled buttons, heading skip).
+- Click "[ View Page Metrics ]" to display the Form Complexity Inspector.
+
+SPOKEN VOICEOVER:
+"With a single click, ACCESSOS extracts a minimal, sanitized semantic representation
+of the page. Unlike standard web scrapers, it never touches raw session cookies or
+sensitive authentication tokens.
+
+Our deterministic accessibility engine immediately audits the page against WCAG 2.1 AA
+standards. Here, it instantly uncovers ten critical barriers before the user types a single
+word: unlabelled form controls, missing alternative text on institutional crests, and
+broken heading hierarchies that disorient screen-reader users.
+
+The Technical Inspector simultaneously audits form complexity—tracking eight distinct
+sections, twenty-eight input fields, and mandatory file upload constraints."
+
+
+[1:30 – 2:15] ACT 3: IN-SITU COGNITIVE RELIEF ("EXPLAIN ANYTHING")
+--------------------------------------------------------------------------------
+SCREEN ACTION:
+- Switch focus to the scholarship portal page.
+- Select the intimidating legal text in the amber statutory notice block:
+  "Pursuant to Ministerial Order No. 492/SCH/2025, candidates must furnish authentic..."
+- Notice the floating lightbulb (💡) badge appear right beside the cursor.
+- Click the 💡 badge to open the in-page popover.
+- Switch between the "Simple", "Plain Language", and "Key Points" tabs.
+
+SPOKEN VOICEOVER:
+"For first-generation college applicants and citizens facing cognitive overload,
+dense bureaucratic language is the biggest barrier to entry. ACCESSOS solves this with
+'Explain Anything'.
+
+Whenever a citizen encounters confusing legal language, they simply highlight the text.
+A contextual assistive badge appears immediately at their cursor.
+
+With one click, our engine de-jargons the clause into plain, actionable language.
+Instead of threatening legal penalties, ACCESSOS explains clearly: 'Upload your verified
+certificates before the deadline, or your application will be cancelled automatically.'
+This transforms hostile bureaucratic mandates into calm, understandable instructions."
+
+
+[2:15 – 3:00] ACT 4: CITIZEN PROFILE VAULT & ASSISTED FILL
+--------------------------------------------------------------------------------
+SCREEN ACTION:
+- Re-open the ACCESSOS popup and click the "🗄️ Profile Vault" trigger button.
+- Show the active verified profile pill: "Aarav Sharma".
+- Click "🔍 Scan Active Form".
+- Point out the badge updating to "16 Mapped" and review the correlation list.
+- Click the primary button: "⚡ Fill Matched Fields".
+- Switch to the portal page: show form fields populated with the green
+  assistive glow outline (.accessos-field-populated).
+
+SPOKEN VOICEOVER:
+"Re-typing personal, academic, and banking information across dozens of government
+schemes causes severe form fatigue and accidental typing errors. We solved this with
+the Citizen Profile Vault.
+
+The user's verified identity, domicile, and academic records are stored securely on-device
+in local extension storage. When navigating any supported portal, ACCESSOS's intelligent
+matching engine correlates the form's inputs against the user's verified records using
+semantic aliases and fuzzy label scoring.
+
+With one click, it assistively populates sixteen fields across multiple steps.
+Notice our zero-trust safety boundary: ACCESSOS strictly ignores password fields, never
+stores payment cards, and never auto-submits. Everything is staged cleanly for user review."
+
+
+[3:00 – 3:35] ACT 5: REAL-TIME WORKFLOW COMPLETION CHECKER
+--------------------------------------------------------------------------------
+SCREEN ACTION:
+- In the popup, click "✅ Completion Checker".
+- Click "Re-evaluate Completion".
+- Show the progress bar jump from 0% to "90%+".
+- Scroll through the 8 Workflow Stages: show green completed checks on
+  Applicant Info, Personal, Academic, and Bank details.
+- Show that Step 7 (Documents) and Step 8 (Declaration) are flagged as pending.
+
+SPOKEN VOICEOVER:
+"Next, the Completion Checker acts as a personal pre-flight inspection for the applicant.
+It evaluates the live form state against statutory completion rules across all eight stages.
+
+Notice how the readiness score dynamically jumps to over ninety percent. The checker
+verifies that primary applicant data, domicile particulars, and bank credentials are valid,
+while clearly highlighting that supporting documents and the final statutory declaration
+still require human attention."
+
+
+[3:35 – 4:20] ACT 6: DOCUMENT INTELLIGENCE & MISMATCH GUARD
+--------------------------------------------------------------------------------
+SCREEN ACTION:
+- In the popup, click "📄 Document Intelligence".
+- Click "Choose File" and select:
+  demo-site/sample-documents/sbi_bank_passbook_frontpage.txt
+- Click "Analyze Document".
+- Review the results card:
+  - Detected Category: "BANK DOCUMENT" (95% confidence).
+  - Extracted Facts: Aarav Sharma, State Bank of India, Account Number, IFSC SBIN0001234.
+  - Webpage Requirement: "Likely Match" with Step 6 Bank Details.
+- Click "📥 Save Extracted Facts to Profile Vault" to show the success confirmation toast.
+
+SPOKEN VOICEOVER:
+"Where ordinary extensions stop at text autofill, ACCESSOS delivers true Document
+Intelligence. When an applicant uploads a bank passbook or income certificate, our engine
+extracts grounded, verified facts and compares them directly against the webpage requirements.
+
+Crucially, this prevents catastrophic errors. If an applicant accidentally uploads an older
+certificate or a parent's passbook with a mismatched surname, ACCESSOS catches the
+discrepancy immediately before submission—saving the applicant from instant disqualification.
+
+Furthermore, verified facts extracted from authentic documents can be synced back into
+the Citizen Profile Vault with a single tap for future applications."
+
+
+[4:20 – 4:45] ACT 7: SAFE INTERACTION POLICY & HUMAN PROVENANCE
+--------------------------------------------------------------------------------
+SCREEN ACTION:
+- Navigate to Step 8 (Declaration) on the scholarship portal.
+- Check the statutory affirmation checkboxes.
+- Click the official button: "Submit Application".
+- The page transitions to the official confirmation receipt card displaying:
+  - Application Reference Number: SCH-2026-884920
+  - Status: Pending Institutional Verification
+  - Timestamp and Candidate Name.
+- Click "🖨️ Download / Print Acknowledgement" to show the official receipt alert.
+
+SPOKEN VOICEOVER:
+"Finally, we arrive at submission. ACCESSOS strictly enforces a Human Provenance Policy.
+While read, audit, and assist operations are automated, legal submissions are strictly
+fenced. The AI agent never has the authority to submit legal declarations autonomously.
+
+The student reviews their populated data, affirms the declaration, and clicks submit
+themselves. They receive their official verified application reference: SCH-2026-884920."
+
+
+[4:45 – 5:00] ACT 8: ARCHITECTURE & CLOSING STATEMENT
+--------------------------------------------------------------------------------
+SCREEN ACTION:
+- Briefly display the project terminal or code repository showing:
+  - 788 passing Vitest tests (57 test suites).
+  - 191 passing Pytest backend tests.
+  - Multi-provider fallback across Gemini, Claude, OpenAI, and local Ollama.
+
+SPOKEN VOICEOVER:
+"Under the hood, ACCESSOS is powered by a resilient FastAPI architecture with multi-model
+AI fallback, offline deterministic guarantees, and over seven hundred and eighty automated
+tests.
+
+ACCESSOS transforms complex, hostile institutional web forms into an accessible,
+empowering, and dignified gateway for every citizen. Thank you."
+
+================================================================================
+END OF 5-MINUTE SCRIPT
+================================================================================

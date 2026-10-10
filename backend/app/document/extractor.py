@@ -26,7 +26,7 @@ def _extract_page_facts(page: DocumentPageRepresentation) -> List[ExtractedFact]
 
     # 1. Applicant Name / Student Name / Candidate Name
     name_patterns = [
-        r"(?i)(?:Candidate\s+Name|Applicant\s+Name|Student\s+Name|Name\s+of\s+(?:the\s+)?Candidate|Name\s+of\s+(?:the\s+)?Applicant|Name\s+of\s+(?:the\s+)?Student|Full\s+Name)\s*[:\-]\s*([A-Za-z\s\.]{3,50})",
+        r"(?i)(?:Candidate\s+Name|Applicant\s+Name|Student\s+Name|Name\s+of\s+(?:the\s+)?Candidate|Name\s+of\s+(?:the\s+)?Applicant|Name\s+of\s+(?:the\s+)?Student|Full\s+Name|(?:^|[\r\n])\s*Name)\s*[:\-]\s*([A-Za-z\s\.]{3,50})",
         r"(?i)(?:This\s+is\s+to\s+certify\s+that\s+(?:Shri|Kumari|Mr\.|Ms\.)?\s*)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)",
     ]
     for pattern in name_patterns:
@@ -49,6 +49,24 @@ def _extract_page_facts(page: DocumentPageRepresentation) -> List[ExtractedFact]
                     )
                 )
                 break
+
+    # 1.5 Date of Birth (DOB)
+    dob_pattern = r"(?i)(?:Date\s+of\s+Birth|DOB|D\.O\.B\.)\s*[:\-]?\s*([0-9]{1,2}[\/\-\.][0-9]{1,2}[\/\-\.][0-9]{2,4})"
+    dob_match = re.search(dob_pattern, text)
+    if dob_match:
+        val = dob_match.group(1).strip()
+        start = max(0, dob_match.start() - 10)
+        end = min(len(text), dob_match.end() + 20)
+        facts.append(
+            ExtractedFact(
+                factType=FactType.DOB,
+                value=val,
+                confidence=0.92,
+                sourcePage=page_num,
+                evidence=truncate_evidence(text[start:end]),
+                sensitivity=FactSensitivity.NON_SENSITIVE,
+            )
+        )
 
     # 2. Bank Account Holder Name
     holder_pattern = r"(?i)(?:Account\s+Holder(?:\s+Name)?|A/c\s+Holder(?:\s+Name)?|In\s+the\s+Name\s+of)\s*[:\-]\s*([A-Za-z\s\.]{3,50})"
@@ -130,7 +148,7 @@ def _extract_page_facts(page: DocumentPageRepresentation) -> List[ExtractedFact]
 
     # 6. Income Amount
     income_patterns = [
-        r"(?i)(?:Annual\s+(?:Family\s+)?Income|Gross\s+Income|Total\s+Income)\s*[:\-]?\s*(?:Rs\.?|INR)?\s*([0-9,]+(?:\.\d{2})?)",
+        r"(?i)(?:Annual\s+(?:Family\s+|Household\s+)?Income|Gross\s+Income|Total\s+Income)\s*[:\-]?\s*(?:Rs\.?|INR)?\s*([0-9,]+(?:\.\d{2})?)",
         r"(?i)(?:Rs\.?|INR)\s*([0-9,]+(?:\.\d{2})?)\s*(?:/-\s*)?(?:per\s+annum|\(Annual\))",
     ]
     for in_pat in income_patterns:
